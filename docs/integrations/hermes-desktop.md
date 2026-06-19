@@ -32,6 +32,52 @@ http://127.0.0.1:8001/v1
 
 ## Configure Hermes
 
+There are two different actions:
+
+- Add the model to Hermes' saved custom providers.
+- Make it the active default model.
+
+The quick dropdown may not show a newly saved local provider until Hermes Desktop is restarted and the model is selected through `Edit Models...`.
+
+## Add To The Model Picker
+
+This does not change your active GPT/OpenAI Codex model. It only registers the local endpoint as a saved custom provider.
+
+Double-click:
+
+```text
+scripts\add-hermes-qwen-custom-provider.bat
+```
+
+Command line:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\add-hermes-qwen-custom-provider.ps1
+```
+
+This adds:
+
+```yaml
+custom_providers:
+- name: Qwen3.6 35B-A3B MTP 262K
+  base_url: http://127.0.0.1:8001/v1
+  model: local
+  api_mode: chat_completions
+  models:
+    local:
+      context_length: 262144
+```
+
+Then:
+
+1. Start the Qwen server.
+2. Restart Hermes Desktop.
+3. Open the dropdown shown in the screenshot.
+4. Click `Edit Models...`.
+5. Choose `Qwen3.6 35B-A3B MTP 262K` from the custom/saved provider list.
+
+## Make It The Active Default
+
 This changes Hermes' default model provider. Run it when you want Hermes Desktop to use the local Qwen server by default.
 
 Double-click:
@@ -48,7 +94,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\configure-hermes-q
 
 This backs up `%LOCALAPPDATA%\hermes\config.yaml` before changing it.
 
-It applies:
+It also registers the saved custom provider, then applies:
 
 ```yaml
 model:
@@ -72,10 +118,11 @@ $py = "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\python.exe"
 
 ## Usage Order
 
-1. Start the Qwen server with `start-qwen36-35b-a3b-mtp-262k.bat`.
-2. Configure Hermes once with `configure-hermes-qwen-local-provider.bat`.
+1. Add the saved provider with `add-hermes-qwen-custom-provider.bat`, or make it active with `configure-hermes-qwen-local-provider.bat`.
+2. Start the Qwen server with `start-qwen36-35b-a3b-mtp-262k.bat`.
 3. Launch or restart Hermes Desktop.
-4. Send a small prompt first to verify the local endpoint is live.
+4. Select the saved provider through `Edit Models...` if you only added it.
+5. Send a small prompt first to verify the local endpoint is live.
 
 If Hermes was already open, restart it after changing config so the desktop app reloads the model settings.
 

@@ -71,10 +71,13 @@ Start the server, then configure Hermes:
 
 ```text
 scripts\start-qwen36-35b-a3b-mtp-262k.bat
+scripts\add-hermes-qwen-custom-provider.bat
 scripts\configure-hermes-qwen-local-provider.bat
 ```
 
-The Hermes config helper backs up `%LOCALAPPDATA%\hermes\config.yaml` and applies:
+Use `add-hermes-qwen-custom-provider.bat` to make the endpoint appear under saved custom providers without changing your active default. Use `configure-hermes-qwen-local-provider.bat` when you want to switch Hermes' active default model to the local endpoint.
+
+The active-default config helper backs up `%LOCALAPPDATA%\hermes\config.yaml` and applies:
 
 ```yaml
 model:
@@ -92,6 +95,8 @@ See `docs/integrations/hermes-desktop.md`.
 - `scripts/start-qwen36-35b-a3b-mtp-262k.ps1`: launch server with the best known 262K settings.
 - `scripts/start-qwen36-35b-a3b-mtp-262k.bat`: double-click launcher for the server.
 - `scripts/bench-qwen36-mtp.ps1`: repeatable benchmark harness for MTP settings.
+- `scripts/add-hermes-qwen-custom-provider.ps1`: add the local endpoint to Hermes saved custom providers without switching the active model.
+- `scripts/add-hermes-qwen-custom-provider.bat`: double-click saved-provider helper.
 - `scripts/configure-hermes-qwen-local-provider.ps1`: configure Hermes for the local OpenAI-compatible endpoint.
 - `scripts/configure-hermes-qwen-local-provider.bat`: double-click Hermes config helper.
 - `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`: model-specific tuning summary and agent notes.

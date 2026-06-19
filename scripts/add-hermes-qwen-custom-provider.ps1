@@ -2,7 +2,7 @@ param(
     [string]$BaseUrl = "http://127.0.0.1:8001/v1",
     [string]$Model = "local",
     [int]$ContextLength = 262144,
-    [string]$Provider = "custom"
+    [string]$Name = "Qwen3.6 35B-A3B MTP 262K"
 )
 
 $ErrorActionPreference = "Stop"
@@ -20,50 +20,32 @@ if (-not (Test-Path -LiteralPath $HermesPython)) {
 }
 
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$BackupPath = "$ConfigPath.bak-qwen-local-$timestamp"
+$BackupPath = "$ConfigPath.bak-add-qwen-custom-$timestamp"
 Copy-Item -LiteralPath $ConfigPath -Destination $BackupPath -Force
 
-$registerCode = @"
+$code = @"
 from hermes_cli.main import _save_custom_provider
 
 _save_custom_provider(
     '$BaseUrl',
     model='$Model',
     context_length=$ContextLength,
-    name='Qwen3.6 35B-A3B MTP 262K',
+    name='$Name',
     api_mode='chat_completions',
 )
 "@
 
-& $HermesPython -c $registerCode
+& $HermesPython -c $code
 if ($LASTEXITCODE -ne 0) {
     throw "Hermes custom provider registration failed"
 }
 
-function Set-HermesConfig {
-    param(
-        [string]$Key,
-        [string]$Value
-    )
-
-    & $HermesPython -m hermes_cli.main config set $Key $Value
-    if ($LASTEXITCODE -ne 0) {
-        throw "Hermes config set failed for $Key"
-    }
-}
-
-Set-HermesConfig "model.provider" $Provider
-Set-HermesConfig "model.base_url" $BaseUrl
-Set-HermesConfig "model.default" $Model
-Set-HermesConfig "model.context_length" "$ContextLength"
-Set-HermesConfig "model.api_mode" "chat_completions"
-
 Write-Host ""
-Write-Host "Hermes is configured for the local OpenAI-compatible Qwen endpoint."
-Write-Host "Provider: $Provider"
+Write-Host "Added Hermes custom provider without changing the active default model."
+Write-Host "Name: $Name"
 Write-Host "Base URL: $BaseUrl"
 Write-Host "Model: $Model"
 Write-Host "Context length: $ContextLength"
 Write-Host "Backup: $BackupPath"
 Write-Host ""
-Write-Host "Start the model server before opening Hermes Desktop or starting a Hermes chat."
+Write-Host "Restart Hermes Desktop, then click Edit Models... and pick the saved provider."
