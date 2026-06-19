@@ -9,6 +9,27 @@ The first tuned target is:
 - Context target: `262144`
 - Runtime: Unsloth llama.cpp b9704, Windows HIP/ROCm
 
+## For AI Agents
+
+If you are an AI agent helping with this repo, treat these files as the operational source of truth:
+
+- Model-specific summary: `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`
+- Hermes integration: `docs/integrations/hermes-desktop.md`
+- Tuned server launcher: `scripts/start-qwen36-35b-a3b-mtp-262k.ps1`
+- Double-click launcher: `scripts/start-qwen36-35b-a3b-mtp-262k.bat`
+- Benchmark harness: `scripts/bench-qwen36-mtp.ps1`
+- Raw benchmark CSVs: `results/qwen36-35b-a3b-mtp-262k/`
+
+Important behavior:
+
+- Hermes needs a stable OpenAI-compatible endpoint. This repo standardizes on `http://127.0.0.1:8001/v1`.
+- Unsloth Studio may launch the same model on a dynamic port such as `53477`; do not assume Hermes is using Studio unless Hermes' `model.base_url` points to that exact live port.
+- For Hermes, prefer the `.bat` launcher because it starts the tuned server on the stable `8001` endpoint.
+- `add-hermes-qwen-custom-provider.*` only adds the model to Hermes' saved custom providers; it does not switch the active default.
+- `configure-hermes-qwen-local-provider.*` changes Hermes' active default model to the local endpoint and backs up `%LOCALAPPDATA%\hermes\config.yaml`.
+- Do not apply `--spec-type draft-mtp` to arbitrary GGUFs unless the model has an embedded MTP head or a separate compatible draft model.
+- Do not replace f16 KV with q8/q4 KV for this specific Qwen profile unless a new 262K benchmark proves it is faster.
+
 ## Best Known 262K Profile
 
 Use this profile for the Qwen3.6 35B-A3B MTP model on this hardware:
