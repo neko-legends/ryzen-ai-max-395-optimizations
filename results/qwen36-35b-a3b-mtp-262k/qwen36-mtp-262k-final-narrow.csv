@@ -1,0 +1,7 @@
+"case","backend","context","completion_tokens","eval_tps","prompt_tps","wall_tps","draft_acceptance","draft_accepted","draft_generated","ngram_accepted","log"
+"hip-mtp-n2-t24-ub512","hip","262144","256","47.62","168.55","44.38","0.7879","156","198","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n2-t24-ub512-25f909d9.err.log"
+"hip-mtp-n2-t24-ub1536","hip","262144","256","51.75","175.32","48.16","0.7789","155","199","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n2-t24-ub1536-6b561787.err.log"
+"hip-mtp-n2-t24-ub2048","hip","262144","256","51.2","179.11","47.75","0.7789","155","199","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n2-t24-ub2048-11ce4c85.err.log"
+"hip-mtp-n3-t24-ub1536","hip","262144","256","50.28","174.05","46.86","0.6786","171","252","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t24-ub1536-07c21ed1.err.log"
+"hip-mtp-n2-t28-ub1536","hip","262144","256","51.87","178.54","48.32","0.7789","155","199","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n2-t28-ub1536-92c787bb.err.log"
+"hip-mtp-n3-t28-ub1536","hip","262144","256","51.08","170.96","47.5","0.6786","171","252","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t28-ub1536-65043f4c.err.log"

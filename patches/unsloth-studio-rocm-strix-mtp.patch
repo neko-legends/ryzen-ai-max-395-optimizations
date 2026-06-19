@@ -1,0 +1,99 @@
+diff --git a/studio/backend/core/inference/llama_cpp.py b/studio/backend/core/inference/llama_cpp.py
+--- a/studio/backend/core/inference/llama_cpp.py
++++ b/studio/backend/core/inference/llama_cpp.py
+@@
+ def _auto_mode_drops_mtp(
+     req_mode: Optional[str],
+     size_b: Optional[float],
+     *,
+     has_separate_drafter: bool = False,
+@@
+     if has_separate_drafter:
+         return False
+     return req_mode == "auto" and size_b is not None and size_b < _MTP_MIN_SIZE_B
+ 
+ 
++def _is_rocm_llama_runtime(binary: Optional[str] = None) -> bool:
++    """Best-effort ROCm/HIP detection for llama.cpp launch tuning."""
++    if os.environ.get("HIP_VISIBLE_DEVICES") is not None:
++        return True
++    if os.environ.get("ROCR_VISIBLE_DEVICES") is not None:
++        return True
++    try:
++        import torch
++
++        if getattr(torch.version, "hip", None) is not None:
++            return True
++        if "rocm" in getattr(torch, "__version__", "").lower():
++            return True
++    except Exception:
++        pass
++    if binary:
++        try:
++            bin_dir = Path(binary).resolve().parent
++            return (bin_dir / "ggml-hip.dll").exists() or (bin_dir / "amdhip64_7.dll").exists()
++        except OSError:
++            return False
++    return False
++
++
+ def _extra_args_set_spec_type(extra_args: Optional[Iterable[str]]) -> bool:
+     """User passed --spec-type / --spec-default? llama-server takes one
+     --spec-type (comma-separated to chain), so suppress auto-emit."""
+     return _extra_args_set_any_flag(extra_args, {"--spec-type", "--spec-default"})
+@@
+-                threads_overridden = _extra_args_set_any_flag(extra_args, _THREAD_OVERRIDE_FLAGS)
++                threads_overridden = _extra_args_set_any_flag(extra_args, _THREAD_OVERRIDE_FLAGS)
++                batch_overridden = _extra_args_set_any_flag(
++                    extra_args,
++                    {"--batch-size", "-b", "--ubatch-size", "-ub"},
++                )
++                poll_overridden = _extra_args_set_any_flag(
++                    extra_args,
++                    {
++                        "--poll",
++                        "--poll-batch",
++                        "--spec-draft-poll",
++                        "--poll-draft",
++                        "--spec-draft-poll-batch",
++                        "--poll-batch-draft",
++                    },
++                )
++                mmap_overridden = _extra_args_set_any_flag(
++                    extra_args,
++                    {"--mmap", "--no-mmap"},
++                )
+                 full_offload_tuning_active = fully_gpu_offloaded and not offload_overridden
++                rocm_runtime = _is_rocm_llama_runtime(binary)
+ 
+                 # Thread count: an unset --threads makes llama.cpp pick physical
+                 # cores (common_cpu_get_num_math), but an explicit --threads -1
+                 # resolves to hardware_concurrency() (every hyperthread), which
+@@
+                 if (
+                     sys.platform == "win32"
+                     and full_offload_tuning_active
+                     and not threads_overridden
+                 ):
+-                    cmd.extend(["--threads", "2"])
++                    if rocm_runtime:
++                        cmd.extend(["--threads", "24", "--threads-batch", "24"])
++                    else:
++                        cmd.extend(["--threads", "2"])
+                 elif n_threads is not None and n_threads > 0:
+                     cmd.extend(["--threads", str(n_threads)])
++
++                if sys.platform == "win32" and full_offload_tuning_active and rocm_runtime:
++                    if not batch_overridden:
++                        cmd.extend(["--batch-size", "2048", "--ubatch-size", "1536"])
++                    if not poll_overridden:
++                        cmd.extend(["--poll", "100", "--poll-batch", "1"])
++                    if not mmap_overridden:
++                        cmd.append("--no-mmap")
++                    logger.info(
++                        "ROCm Windows full-offload tuning: threads=24, "
++                        "batch=2048, ubatch=1536, poll=100, no-mmap"
++                    )
+ 
+                 # Enable Jinja chat template rendering
+                 cmd.extend(["--jinja"])

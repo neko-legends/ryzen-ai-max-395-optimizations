@@ -1,0 +1,3 @@
+"case","backend","context","completion_tokens","eval_tps","prompt_tps","wall_tps","draft_acceptance","draft_accepted","draft_generated","ngram_accepted","log"
+"hip-mtp-n2","hip","262144","256","41.87","170.17","39.38","0.733","151","206","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n2-6c80a4ff.err.log"
+"hip-mtp-n2-t24","hip","262144","256","47.49","166.94","44.31","0.7919","156","197","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n2-t24-57f0822b.err.log"
