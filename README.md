@@ -35,6 +35,14 @@ Measured on the local machine, this reached about `51-53 eval tok/s` at 262K con
 
 Start the tuned Qwen server:
 
+Double-click:
+
+```text
+scripts\start-qwen36-35b-a3b-mtp-262k.bat
+```
+
+PowerShell:
+
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-qwen36-35b-a3b-mtp-262k.ps1
 ```
@@ -55,11 +63,39 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.p
   -OutCsv .\results\qwen36-35b-a3b-mtp-262k\my-rerun.csv
 ```
 
+## Hermes Desktop
+
+Hermes Desktop / Hermes Agent can use the tuned llama.cpp server as a local OpenAI-compatible provider.
+
+Start the server, then configure Hermes:
+
+```text
+scripts\start-qwen36-35b-a3b-mtp-262k.bat
+scripts\configure-hermes-qwen-local-provider.bat
+```
+
+The Hermes config helper backs up `%LOCALAPPDATA%\hermes\config.yaml` and applies:
+
+```yaml
+model:
+  provider: custom
+  base_url: http://127.0.0.1:8001/v1
+  default: local
+  context_length: 262144
+  api_mode: chat_completions
+```
+
+See `docs/integrations/hermes-desktop.md`.
+
 ## Repo Layout
 
 - `scripts/start-qwen36-35b-a3b-mtp-262k.ps1`: launch server with the best known 262K settings.
+- `scripts/start-qwen36-35b-a3b-mtp-262k.bat`: double-click launcher for the server.
 - `scripts/bench-qwen36-mtp.ps1`: repeatable benchmark harness for MTP settings.
+- `scripts/configure-hermes-qwen-local-provider.ps1`: configure Hermes for the local OpenAI-compatible endpoint.
+- `scripts/configure-hermes-qwen-local-provider.bat`: double-click Hermes config helper.
 - `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`: model-specific tuning summary and agent notes.
+- `docs/integrations/hermes-desktop.md`: Hermes Desktop local-provider setup.
 - `results/qwen36-35b-a3b-mtp-262k/`: raw CSV benchmark results.
 - `patches/unsloth-studio-rocm-strix-mtp.patch`: patch record for applying the Studio backend defaults.
 
