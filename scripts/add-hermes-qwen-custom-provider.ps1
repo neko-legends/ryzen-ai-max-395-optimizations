@@ -40,6 +40,30 @@ if ($LASTEXITCODE -ne 0) {
     throw "Hermes custom provider registration failed"
 }
 
+function Update-SavedProviderName {
+    param(
+        [string]$Path,
+        [string]$ExpectedBaseUrl,
+        [string]$ExpectedModel,
+        [string]$ExpectedName
+    )
+
+    $text = Get-Content -LiteralPath $Path -Raw
+    $pattern = "(?ms)(- name: ).*?(\r?\n\s+base_url: $([regex]::Escape($ExpectedBaseUrl))\r?\n\s+model: $([regex]::Escape($ExpectedModel)))"
+    $match = [regex]::Match($text, $pattern)
+    if (-not $match.Success) {
+        return
+    }
+
+    $replacement = $match.Groups[1].Value + $ExpectedName + $match.Groups[2].Value
+    $updated = $text.Remove($match.Index, $match.Length).Insert($match.Index, $replacement)
+    if ($updated -ne $text) {
+        Set-Content -LiteralPath $Path -Value $updated -NoNewline
+    }
+}
+
+Update-SavedProviderName -Path $ConfigPath -ExpectedBaseUrl $BaseUrl -ExpectedModel $Model -ExpectedName $Name
+
 Write-Host ""
 Write-Host "Added Hermes custom provider without changing the active default model."
 Write-Host "Name: $Name"

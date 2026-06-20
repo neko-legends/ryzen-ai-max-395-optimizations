@@ -1,0 +1,2 @@
+"case","backend","context","completion_tokens","eval_tps","prompt_tps","wall_tps","draft_acceptance","draft_accepted","draft_generated","ngram_accepted","log"
+"hip-no-mtp-t28-ub1024","hip","262144","512","37.97","204.08","37.07","0","0","0","0","C:\Users\Jun\AppData\Local\Temp\hip-no-mtp-t28-ub1024-495493fc.err.log"

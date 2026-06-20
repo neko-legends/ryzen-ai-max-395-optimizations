@@ -1,0 +1,4 @@
+"case","backend","context","completion_tokens","eval_tps","prompt_tps","wall_tps","draft_acceptance","draft_accepted","draft_generated","ngram_accepted","log"
+"hip-mtp-n3-t24-ub1024","hip","262144","685","51.1","170.45","49.65","0.7576","475","627","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t24-ub1024-7b3465fd.err.log"
+"hip-mtp-n3-t28-ub1024","hip","262144","685","51.26","175.42","49.88","0.7576","475","627","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t28-ub1024-ce535560.err.log"
+"hip-mtp-n4-t24-ub1536","hip","262144","702","49.32","179.67","48.1","0.6835","514","752","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n4-t24-ub1536-3bda88dc.err.log"

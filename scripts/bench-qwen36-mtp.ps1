@@ -48,6 +48,20 @@ function Resolve-LlamaServer {
 function Get-CaseSpec {
     param([string]$Name)
 
+    if ($Name -match "^hip-no-mtp-t(16|20|24|28)-ub(512|1024|1536|2048)$") {
+        $threads = $Matches[1]
+        $ubatch = $Matches[2]
+        return [pscustomobject]@{
+            Name = $Name
+            Backend = "hip"
+            Ctx = $Context
+            Extra = @(
+                "-b", "2048", "-ub", $ubatch, "-t", $threads, "-tb", $threads,
+                "--poll", "100", "--poll-batch", "1", "--no-mmap"
+            )
+        }
+    }
+
     if ($Name -match "^hip-mtp-n([1-6])$") {
         return [pscustomobject]@{
             Name = $Name
