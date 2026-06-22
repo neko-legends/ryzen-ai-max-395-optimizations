@@ -104,11 +104,13 @@ Benchmark the main MXFP4 profile:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
-  -ModelPath C:\Users\Jun\.cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots\5bc3e238d916f48a861bac2f8a1990a0e9b7e98d\Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
+  -ModelPattern Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
   -Case hip-mtp-n3-t28-ub1024 `
   -Context 262144 `
   -OutCsv .\results\qwen36-35b-a3b-mtp-262k\my-rerun.csv
 ```
+
+The benchmark harness searches `%USERPROFILE%\Downloads` and the default Hugging Face cache under `%USERPROFILE%\.cache\huggingface\...`. If your GGUF lives somewhere else, pass `-ModelPath C:\path\to\Qwen3.6-35B-A3B-MXFP4_MOE.gguf`.
 
 ## Hermes Desktop
 

@@ -6,6 +6,11 @@ param(
     [double]$Temperature = 0.0,
     [int]$Seed = 1234,
     [string]$ModelPath = "",
+    [string]$ModelPattern = "Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf",
+    [string[]]$SearchRoots = @(
+        (Join-Path $HOME "Downloads"),
+        (Join-Path $HOME ".cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots")
+    ),
     [string]$OutCsv = ""
 )
 
@@ -17,13 +22,22 @@ Write a compact but realistic PowerShell module that watches a project folder fo
 "@
 
 function Resolve-QwenModel {
-    $snapshotRoot = Join-Path $HOME ".cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots"
-    $model = Get-ChildItem -LiteralPath $snapshotRoot -Recurse -Filter "Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf" -ErrorAction SilentlyContinue |
+    $candidates = @()
+    foreach ($root in $SearchRoots) {
+        if (-not (Test-Path -LiteralPath $root)) {
+            continue
+        }
+
+        $candidates += Get-ChildItem -LiteralPath $root -Recurse -Filter $ModelPattern -ErrorAction SilentlyContinue
+    }
+
+    $model = $candidates |
         Sort-Object LastWriteTime -Descending |
         Select-Object -First 1
 
     if (-not $model) {
-        throw "Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf was not found under $snapshotRoot"
+        $roots = $SearchRoots -join ", "
+        throw "$ModelPattern was not found under: $roots. Pass -ModelPath C:\path\to\$ModelPattern if the GGUF is elsewhere."
     }
 
     $model.FullName

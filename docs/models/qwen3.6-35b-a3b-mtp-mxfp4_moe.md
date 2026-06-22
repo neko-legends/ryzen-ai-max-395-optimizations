@@ -6,14 +6,14 @@ This file is the source-of-truth tuning summary for `Qwen3.6-35B-A3B-MXFP4_MOE.g
 
 - GGUF: `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`
 - Family: `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`
-- Local path tested: `C:\Users\Jun\.cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots\5bc3e238d916f48a861bac2f8a1990a0e9b7e98d\Qwen3.6-35B-A3B-MXFP4_MOE.gguf`
+- Local file tested: `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`
 - Active params: about 3B active MoE
 - Feature used: embedded MTP head through llama.cpp `--spec-type draft-mtp`
 - Best target context tested here: `262144`
 
 The `MXFP4_MOE` filename describes the MoE weight quantization. MTP is still part of this GGUF family, but it only activates when llama.cpp is launched with `--spec-type draft-mtp`.
 
-The local file was first downloaded by the browser and then moved into the Unsloth Hugging Face cache snapshot so Studio and the standalone launcher can find it from the same repo family.
+The launcher and benchmark examples search `%USERPROFILE%\Downloads` and the default Hugging Face cache under `%USERPROFILE%\.cache\huggingface\...`. Pass `-ModelPath C:\path\to\Qwen3.6-35B-A3B-MXFP4_MOE.gguf` if your GGUF lives somewhere else.
 
 ## Hardware And Runtime
 
@@ -104,7 +104,7 @@ Benchmark the confirmed winners:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
-  -ModelPath C:\Users\Jun\.cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots\5bc3e238d916f48a861bac2f8a1990a0e9b7e98d\Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
+  -ModelPattern Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
   -Case "hip-mtp-n3-t24-ub1024,hip-mtp-n3-t28-ub1024,hip-mtp-n4-t24-ub1536" `
   -Context 262144 `
   -MaxTokens 1024 `
@@ -115,7 +115,7 @@ Run the no-MTP baseline:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
-  -ModelPath C:\Users\Jun\.cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots\5bc3e238d916f48a861bac2f8a1990a0e9b7e98d\Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
+  -ModelPattern Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
   -Case hip-no-mtp-t28-ub1024 `
   -Context 262144 `
   -MaxTokens 512
