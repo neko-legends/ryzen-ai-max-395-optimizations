@@ -1,5 +1,9 @@
 # Ryzen AI Max+ 395 Local LLM Optimizations
 
+![Qwen3.6 35B-A3B 262K tok/s comparison](docs/assets/qwen36-262k-tok-s.svg)
+
+In the chart, `eval` means model generation speed only, while `wall` means full request speed and is closer to what a user feels. Chart source rows are in `docs/assets/qwen36-262k-tok-s.csv`. Completion lengths vary across the selected source-of-truth runs, so read it as a profile ranking rather than a fully controlled sweep.
+
 Benchmarks and launch profiles for running large GGUF models on AMD Ryzen AI Max+ 395 / Radeon 8060S Strix Halo systems.
 
 The tuned targets are:

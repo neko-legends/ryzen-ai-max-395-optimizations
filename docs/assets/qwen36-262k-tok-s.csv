@@ -1,0 +1,9 @@
+label,model,case,completion_tokens,eval_tps,wall_tps,source_file,note
+"UD-Q4_K_XL draft-mtp n=2, t24, ub1536",Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf,hip-mtp-n2-t24-ub1536,256,52.95,49.2,results/qwen36-35b-a3b-mtp-262k/qwen36-mtp-262k-deterministic.csv,best UD-Q4_K_XL deterministic row
+"UD-Q4_K_XL draft-mtp n=2, t28, ub1536",Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf,hip-mtp-n2-t28-ub1536,256,51.87,48.32,results/qwen36-35b-a3b-mtp-262k/qwen36-mtp-262k-final-narrow.csv,UD-Q4_K_XL final narrow sweep
+"UD-Q4_K_XL draft-mtp n=2, t24, ub1536 rerun",Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf,hip-mtp-n2-t24-ub1536,256,51.75,48.16,results/qwen36-35b-a3b-mtp-262k/qwen36-mtp-262k-final-narrow.csv,UD-Q4_K_XL confirmation rerun
+"MXFP4_MOE draft-mtp n=3, t28, ub1024",Qwen3.6-35B-A3B-MXFP4_MOE.gguf,hip-mtp-n3-t28-ub1024,685,51.26,49.88,results/qwen36-35b-a3b-mtp-262k/mxfp4-moe-best-confirm-1024tok.csv,"recommended MXFP4_MOE profile, 1024 max-token confirmation"
+"MXFP4_MOE draft-mtp n=3, t24, ub1024",Qwen3.6-35B-A3B-MXFP4_MOE.gguf,hip-mtp-n3-t24-ub1024,685,51.1,49.65,results/qwen36-35b-a3b-mtp-262k/mxfp4-moe-best-confirm-1024tok.csv,"lower-CPU MXFP4_MOE fallback, 1024 max-token confirmation"
+"MXFP4_MOE draft-mtp n=4, t24, ub1536",Qwen3.6-35B-A3B-MXFP4_MOE.gguf,hip-mtp-n4-t24-ub1536,702,49.32,48.1,results/qwen36-35b-a3b-mtp-262k/mxfp4-moe-best-confirm-1024tok.csv,"MXFP4_MOE n=4 comparison, 1024 max-token confirmation"
+"MXFP4_MOE no MTP, t28, ub1024",Qwen3.6-35B-A3B-MXFP4_MOE.gguf,hip-no-mtp-t28-ub1024,512,37.97,37.07,results/qwen36-35b-a3b-mtp-262k/mxfp4-moe-no-mtp-baseline.csv,MXFP4_MOE baseline without draft MTP
+UD-Q4_K_XL Studio-like baseline,Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf,hip-studio-mtp-n2-262k,256,22.88,20.82,results/qwen36-35b-a3b-mtp-262k/qwen36-mtp-262k-misc.csv,Studio-like slow baseline
