@@ -46,7 +46,7 @@ This file is the source-of-truth tuning summary for the locally installed Qwen3.
 The standalone launcher uses these by default:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-qwen36-35b-a3b-mtp-262k.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mtp-262k.ps1
 ```
 
 ## Best Results
@@ -92,7 +92,7 @@ If you are an AI agent adapting this to another local GGUF:
 ## Reproduce The Main Sweep
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\bench-qwen36-mtp.ps1 `
   -Case "hip-mtp-n1,hip-mtp-n2,hip-mtp-n3,hip-mtp-n4,hip-mtp-n5,hip-mtp-n6" `
   -Context 262144 `
   -OutCsv .\results\qwen36-35b-a3b-mtp-262k\my-sweep.csv
@@ -101,7 +101,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.p
 Fine-tune the current winner:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\bench-qwen36-mtp.ps1 `
   -Case "hip-mtp-n2-t24-ub512,hip-mtp-n2-t24-ub1536,hip-mtp-n2-t24-ub2048,hip-mtp-n2-t28-ub1536" `
   -Context 262144 `
   -OutCsv .\results\qwen36-35b-a3b-mtp-262k\my-final.csv
@@ -110,7 +110,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.p
 Use another local model path:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\bench-qwen36-mtp.ps1 `
   -ModelPath C:\path\to\model.gguf `
   -Case hip-mtp-n2-t24-ub1536 `
   -Context 262144

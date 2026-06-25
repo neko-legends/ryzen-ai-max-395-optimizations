@@ -1,0 +1,2 @@
+"case","run","model","model_file","context","reasoning","cache_type_k","cache_type_v","cache_ram","max_tokens","prompt_tokens","completion_tokens","total_tokens","eval_tps","prompt_tps","wall_seconds","wall_tps","log"
+"hip-no-mtp-t28-ub1024","1","ornith-1.0-35b-q5-k-m","ornith-1.0-35b-Q5_K_M.gguf","262144","on","f16","f16","0","256","60","256","316","34.84","149.62","7.776","32.92","C:\Users\Jun\AppData\Local\Temp\hip-no-mtp-t28-ub1024-eda99b34.err.log"

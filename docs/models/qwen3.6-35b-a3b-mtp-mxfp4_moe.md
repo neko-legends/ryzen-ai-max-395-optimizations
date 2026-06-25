@@ -53,7 +53,7 @@ Use this profile for the standalone Hermes/local endpoint launcher:
 `threads=24` is nearly tied with `threads=28` and is a reasonable lower-CPU fallback:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1 -Threads 24 -ThreadsBatch 24
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1 -Threads 24 -ThreadsBatch 24
 ```
 
 ## Best Results
@@ -97,13 +97,13 @@ At `threads=24`, `ubatch=1536`, and 512 requested tokens:
 Run the MXFP4 server:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1
 ```
 
 Benchmark the confirmed winners:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\bench-qwen36-mtp.ps1 `
   -ModelPattern Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
   -Case "hip-mtp-n3-t24-ub1024,hip-mtp-n3-t28-ub1024,hip-mtp-n4-t24-ub1536" `
   -Context 262144 `
@@ -114,7 +114,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.p
 Run the no-MTP baseline:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\bench-qwen36-mtp.ps1 `
   -ModelPattern Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
   -Case hip-no-mtp-t28-ub1024 `
   -Context 262144 `

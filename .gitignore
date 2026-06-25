@@ -1,4 +1,8 @@
 *.err.log
 *.out.log
 *.tmp
+*.part
 __pycache__/
+models/
+.local-model-cache/
+logs/

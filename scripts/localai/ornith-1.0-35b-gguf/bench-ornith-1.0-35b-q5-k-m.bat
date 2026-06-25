@@ -1,0 +1,6 @@
+@echo off
+setlocal
+cd /d "%~dp0..\..\.."
+echo Benchmarking DeepReinforce Ornith 1.0 35B GGUF Q5_K_M...
+echo.
+powershell -NoProfile -ExecutionPolicy Bypass -NoExit -File "%~dp0bench-ornith-1.0-35b-q5-k-m.ps1" %*

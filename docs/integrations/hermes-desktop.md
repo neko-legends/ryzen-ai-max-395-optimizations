@@ -15,16 +15,16 @@ The local Hermes install confirms this path:
 Double-click:
 
 ```text
-scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.bat
+scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.bat
 ```
 
 Command line:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1
 ```
 
-The older `scripts\start-qwen36-35b-a3b-mtp-262k.bat` launcher starts the `UD-Q4_K_XL` profile. Use the MXFP4 launcher when `Qwen3.6-35B-A3B-MXFP4_MOE.gguf` is present.
+The older `scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mtp-262k.bat` launcher starts the `UD-Q4_K_XL` profile. Use the MXFP4 launcher when `Qwen3.6-35B-A3B-MXFP4_MOE.gguf` is present.
 
 Default endpoint:
 
@@ -48,13 +48,13 @@ This does not change your active GPT/OpenAI Codex model. It only registers the l
 Double-click:
 
 ```text
-scripts\add-hermes-qwen-mxfp4-custom-provider.bat
+scripts\hermes\add-hermes-qwen-mxfp4-custom-provider.bat
 ```
 
 Command line:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\add-hermes-qwen-custom-provider.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\hermes\add-hermes-qwen-custom-provider.ps1 `
   -Name "Qwen3.6 35B-A3B MXFP4 MTP 262K"
 ```
 
@@ -86,13 +86,13 @@ This changes Hermes' default model provider. Run it when you want Hermes Desktop
 Double-click:
 
 ```text
-scripts\configure-hermes-qwen-mxfp4-local-provider.bat
+scripts\hermes\configure-hermes-qwen-mxfp4-local-provider.bat
 ```
 
 Command line:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\configure-hermes-qwen-local-provider.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\hermes\configure-hermes-qwen-local-provider.ps1 `
   -Name "Qwen3.6 35B-A3B MXFP4 MTP 262K"
 ```
 
@@ -122,8 +122,8 @@ $py = "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\python.exe"
 
 ## Usage Order
 
-1. Add the saved provider with `add-hermes-qwen-mxfp4-custom-provider.bat`, or make it active with `configure-hermes-qwen-mxfp4-local-provider.bat`.
-2. Start the Qwen server with `start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`.
+1. Add the saved provider with `scripts\hermes\add-hermes-qwen-mxfp4-custom-provider.bat`, or make it active with `scripts\hermes\configure-hermes-qwen-mxfp4-local-provider.bat`.
+2. Start the Qwen server with `scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`.
 3. Launch or restart Hermes Desktop.
 4. Select the saved provider through `Edit Models...` if you only added it.
 5. Send a small prompt first to verify the local endpoint is live.
@@ -172,5 +172,5 @@ Or use Hermes' model picker/config commands to select a cloud provider again.
 - Keep `provider: custom`; `model.base_url` is the routing signal for Hermes.
 - `model.default: local` is accepted by llama.cpp server requests. If a future server enforces model IDs, use the model id returned by `/v1/models`.
 - Start the model server before Hermes attempts to use the provider.
-- For the MXFP4_MOE GGUF, the server should be started with the 262K profile in `scripts/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`.
+- For the MXFP4_MOE GGUF, the server should be started with the 262K profile in `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`.
 - Hermes only sees an OpenAI-compatible endpoint. It does not know whether the backend model is `UD-Q4_K_XL` or `MXFP4_MOE`; use the provider name to keep the UI clear.

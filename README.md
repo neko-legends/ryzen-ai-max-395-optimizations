@@ -1,6 +1,6 @@
 # Ryzen AI Max+ 395 Local LLM Optimizations
 
-![Qwen3.6 35B-A3B 262K tok/s comparison](docs/assets/qwen36-262k-tok-s.svg)
+![Ryzen AI Max+ 395 262K tok/s comparison](docs/assets/qwen36-262k-tok-s.svg)
 
 In the chart, `eval` means model generation speed only, while `wall` means full request speed and is closer to what a user feels. Chart source rows are in `docs/assets/qwen36-262k-tok-s.csv`. Completion lengths vary across the selected source-of-truth runs, so read it as a profile ranking rather than a fully controlled sweep.
 
@@ -21,11 +21,13 @@ If you are an AI agent helping with this repo, treat these files as the operatio
 - Model-specific summary: `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`
 - MXFP4_MOE summary: `docs/models/qwen3.6-35b-a3b-mtp-mxfp4_moe.md`
 - Hermes integration: `docs/integrations/hermes-desktop.md`
-- Tuned server launcher: `scripts/start-qwen36-35b-a3b-mtp-262k.ps1`
-- Double-click launcher: `scripts/start-qwen36-35b-a3b-mtp-262k.bat`
-- MXFP4_MOE tuned server launcher: `scripts/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`
-- MXFP4_MOE double-click launcher: `scripts/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`
-- Benchmark harness: `scripts/bench-qwen36-mtp.ps1`
+- Script layout and local model paths: `scripts/README.md`
+- Tuned server launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mtp-262k.ps1`
+- Double-click launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mtp-262k.bat`
+- MXFP4_MOE tuned server launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`
+- MXFP4_MOE double-click launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`
+- Benchmark harness: `scripts/localai/qwen36-35b-a3b-mtp-gguf/bench-qwen36-mtp.ps1`
+- Ornith Q5_K_M scripts: `scripts/localai/ornith-1.0-35b-gguf/`
 - Raw benchmark CSVs: `results/qwen36-35b-a3b-mtp-262k/`
 
 Important behavior:
@@ -33,9 +35,9 @@ Important behavior:
 - Hermes needs a stable OpenAI-compatible endpoint. This repo standardizes on `http://127.0.0.1:8001/v1`.
 - Unsloth Studio may launch the same model on a dynamic port such as `53477`; do not assume Hermes is using Studio unless Hermes' `model.base_url` points to that exact live port.
 - For Hermes, prefer the `.bat` launcher because it starts the tuned server on the stable `8001` endpoint.
-- For `MXFP4_MOE`, use `scripts/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`; it auto-searches `Downloads` and the Unsloth HF cache for `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`.
-- `add-hermes-qwen-custom-provider.*` only adds the model to Hermes' saved custom providers; it does not switch the active default.
-- `configure-hermes-qwen-local-provider.*` changes Hermes' active default model to the local endpoint and backs up `%LOCALAPPDATA%\hermes\config.yaml`.
+- For `MXFP4_MOE`, use `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`; it auto-searches `Downloads` and the Unsloth HF cache for `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`.
+- `scripts/hermes/add-hermes-qwen-custom-provider.*` only adds the model to Hermes' saved custom providers; it does not switch the active default.
+- `scripts/hermes/configure-hermes-qwen-local-provider.*` changes Hermes' active default model to the local endpoint and backs up `%LOCALAPPDATA%\hermes\config.yaml`.
 - Do not apply `--spec-type draft-mtp` to arbitrary GGUFs unless the model has an embedded MTP head or a separate compatible draft model.
 - Do not replace f16 KV with q8/q4 KV for this specific Qwen profile unless a new 262K benchmark proves it is faster.
 
@@ -78,32 +80,32 @@ Start the tuned MXFP4_MOE Qwen server:
 Double-click:
 
 ```text
-scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.bat
+scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.bat
 ```
 
 PowerShell:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1
 ```
 
 Use a specific local GGUF instead of the auto-detected Unsloth cache:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1 `
   -ModelPath C:\path\to\Qwen3.6-35B-A3B-MXFP4_MOE.gguf
 ```
 
 Start the older UD-Q4 profile instead:
 
 ```text
-scripts\start-qwen36-35b-a3b-mtp-262k.bat
+scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mtp-262k.bat
 ```
 
 Benchmark the main MXFP4 profile:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b-a3b-mtp-gguf\bench-qwen36-mtp.ps1 `
   -ModelPattern Qwen3.6-35B-A3B-MXFP4_MOE.gguf `
   -Case hip-mtp-n3-t28-ub1024 `
   -Context 262144 `
@@ -112,6 +114,35 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bench-qwen36-mtp.p
 
 The benchmark harness searches `%USERPROFILE%\Downloads` and the default Hugging Face cache under `%USERPROFILE%\.cache\huggingface\...`. If your GGUF lives somewhere else, pass `-ModelPath C:\path\to\Qwen3.6-35B-A3B-MXFP4_MOE.gguf`.
 
+Download Ornith 1.0 35B Q5_K_M:
+
+```text
+scripts\localai\ornith-1.0-35b-gguf\download-ornith-1.0-35b-q5-k-m.bat
+```
+
+The Q5_K_M GGUF is about `23.0 GiB`, so check free disk space before starting the download.
+
+Benchmark Ornith with a no-MTP HIP profile:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\ornith-1.0-35b-gguf\bench-ornith-1.0-35b-q5-k-m.ps1 `
+  -Case hip-no-mtp-t28-ub1024 `
+  -Context 262144 `
+  -OutCsv .\results\ornith-1.0-35b-gguf\ornith-q5-rerun.csv
+```
+
+Ornith is not treated as an MTP model here; retune and prove it before adding `--spec-type draft-mtp`.
+
+## Local Model Storage
+
+This repo keeps model weights out of git. The current local install is mostly Hugging Face cache based:
+
+- Runtime: `%USERPROFILE%\.unsloth\llama.cpp\build\bin\Release\llama-server.exe`
+- Qwen cache: `%USERPROFILE%\.cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots\...`
+- Ornith downloader target: `%USERPROFILE%\.cache\huggingface\hub\models--deepreinforce-ai--Ornith-1.0-35B-GGUF\snapshots\...`
+
+Use `-ModelPath` for one-off files elsewhere. Prefer the Hugging Face cache by default because the existing Qwen files already live there and it avoids duplicate 20+ GB GGUFs.
+
 ## Hermes Desktop
 
 Hermes Desktop / Hermes Agent can use the tuned llama.cpp server as a local OpenAI-compatible provider.
@@ -119,12 +150,12 @@ Hermes Desktop / Hermes Agent can use the tuned llama.cpp server as a local Open
 Start the server, then configure Hermes:
 
 ```text
-scripts\start-qwen36-35b-a3b-mxfp4-mtp-262k.bat
-scripts\add-hermes-qwen-mxfp4-custom-provider.bat
-scripts\configure-hermes-qwen-mxfp4-local-provider.bat
+scripts\localai\qwen36-35b-a3b-mtp-gguf\start-qwen36-35b-a3b-mxfp4-mtp-262k.bat
+scripts\hermes\add-hermes-qwen-mxfp4-custom-provider.bat
+scripts\hermes\configure-hermes-qwen-mxfp4-local-provider.bat
 ```
 
-Use `add-hermes-qwen-mxfp4-custom-provider.bat` to make the endpoint appear under saved custom providers without changing your active default. Use `configure-hermes-qwen-mxfp4-local-provider.bat` when you want to switch Hermes' active default model to the local endpoint.
+Use `scripts\hermes\add-hermes-qwen-mxfp4-custom-provider.bat` to make the endpoint appear under saved custom providers without changing your active default. Use `scripts\hermes\configure-hermes-qwen-mxfp4-local-provider.bat` when you want to switch Hermes' active default model to the local endpoint.
 
 The older generic provider BATs still work for the same endpoint; the MXFP4 BATs only give the saved provider a clearer display name.
 
@@ -143,17 +174,10 @@ See `docs/integrations/hermes-desktop.md`.
 
 ## Repo Layout
 
-- `scripts/start-qwen36-35b-a3b-mtp-262k.ps1`: launch server with the best known 262K settings.
-- `scripts/start-qwen36-35b-a3b-mtp-262k.bat`: double-click launcher for the server.
-- `scripts/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`: launch the MXFP4_MOE GGUF with the measured 262K settings.
-- `scripts/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`: double-click MXFP4_MOE launcher.
-- `scripts/bench-qwen36-mtp.ps1`: repeatable benchmark harness for MTP settings.
-- `scripts/add-hermes-qwen-custom-provider.ps1`: add the local endpoint to Hermes saved custom providers without switching the active model.
-- `scripts/add-hermes-qwen-custom-provider.bat`: double-click saved-provider helper.
-- `scripts/add-hermes-qwen-mxfp4-custom-provider.bat`: double-click saved-provider helper with an MXFP4-specific display name.
-- `scripts/configure-hermes-qwen-local-provider.ps1`: configure Hermes for the local OpenAI-compatible endpoint.
-- `scripts/configure-hermes-qwen-local-provider.bat`: double-click Hermes config helper.
-- `scripts/configure-hermes-qwen-mxfp4-local-provider.bat`: double-click Hermes config helper with an MXFP4-specific display name.
+- `scripts/README.md`: script layout and local model storage notes.
+- `scripts/localai/qwen36-35b-a3b-mtp-gguf/`: Qwen GGUF server launchers and MTP benchmark harness.
+- `scripts/localai/ornith-1.0-35b-gguf/`: Ornith Q5_K_M downloader and no-MTP benchmark harness.
+- `scripts/hermes/`: Hermes saved-provider and active-default helpers.
 - `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`: model-specific tuning summary and agent notes.
 - `docs/models/qwen3.6-35b-a3b-mtp-mxfp4_moe.md`: MXFP4_MOE tuning summary and agent notes.
 - `docs/integrations/hermes-desktop.md`: Hermes Desktop local-provider setup.
@@ -215,4 +239,4 @@ The installed Unsloth Studio backend was patched locally to use the measured Win
 
 An Unsloth Studio update may overwrite the installed package. Reapply `patches/unsloth-studio-rocm-strix-mtp.patch` or use the standalone launcher script.
 
-For `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`, prefer `scripts/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat` unless a fresh Studio benchmark proves Studio is applying the same `n=3`, `ub1024`, f16-KV profile.
+For `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`, prefer `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat` unless a fresh Studio benchmark proves Studio is applying the same `n=3`, `ub1024`, f16-KV profile.
