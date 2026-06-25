@@ -1,0 +1,5 @@
+quant,context_label,prompt_tokens,completion_tokens,prompt_tps,eval_tps,wall_seconds,wall_tps,source_file,note
+Q4_K_M,short prompt,60,256,183.28,35.46,7.568,33.83,results/ornith-1.0-35b-gguf/ornith-q4-ctx262k-t28-ub1024-20260625-133418.csv,"60-token sanity prompt, reasoning on, f16 KV, no MTP"
+Q5_K_M,short prompt,60,256,149.62,34.84,7.776,32.92,results/ornith-1.0-35b-gguf/ornith-q5-ctx262k-t28-ub1024-20260625-131435.csv,"60-token sanity prompt, reasoning on, f16 KV, no MTP"
+Q4_K_M,174.6K prompt,174588,1024,197.44,18.37,940.199,1.09,results/ornith-1.0-35b-gguf/ornith-q4-ctx262k-prompt200k-gen1024-20260625-135425.csv,"BookContext 200K fixture, cold one-shot prefill, reasoning on, f16 KV, no MTP"
+Q5_K_M,174.6K prompt,174588,1024,202.92,18.03,917.397,1.12,results/ornith-1.0-35b-gguf/ornith-q5-ctx262k-prompt200k-gen1024-20260625-141458.csv,"BookContext 200K fixture, cold one-shot prefill, reasoning on, f16 KV, no MTP"

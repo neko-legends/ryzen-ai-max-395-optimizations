@@ -4,6 +4,10 @@
 
 In the chart, `eval` means model generation speed only, while `wall` means full request speed and is closer to what a user feels. Chart source rows are in `docs/assets/qwen36-262k-tok-s.csv`. Completion lengths vary across the selected source-of-truth runs, so read it as a profile ranking rather than a fully controlled sweep.
 
+![Ornith 1.0 35B 262K context findings](docs/assets/ornith-262k-context.svg)
+
+The Ornith-specific chart separates output speed from cold prompt prefill. That keeps the 174K-context run readable without treating one-shot preload latency as steady interactive throughput.
+
 Benchmarks and launch profiles for running large GGUF models on AMD Ryzen AI Max+ 395 / Radeon 8060S Strix Halo systems.
 
 The tuned targets are:
@@ -29,6 +33,7 @@ If you are an AI agent helping with this repo, treat these files as the operatio
 - Benchmark harness: `scripts/localai/qwen36-35b-a3b-mtp-gguf/bench-qwen36-mtp.ps1`
 - Ornith Q4_K_M and Q5_K_M scripts: `scripts/localai/ornith-1.0-35b-gguf/`
 - Cross-repo prompt fixtures: `benchmarks/prompts/`
+- Ornith-specific context chart: `docs/assets/ornith-262k-context.svg`
 - Raw benchmark CSVs: `results/qwen36-35b-a3b-mtp-262k/`
 
 Important behavior:
