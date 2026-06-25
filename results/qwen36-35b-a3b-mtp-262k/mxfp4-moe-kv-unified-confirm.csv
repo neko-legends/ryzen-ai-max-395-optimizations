@@ -1,0 +1,5 @@
+"case","backend","context","kv_unified","mlock","metrics","cache_ram","completion_tokens","eval_tps","prompt_tps","wall_tps","draft_acceptance","draft_accepted","draft_generated","ngram_accepted","log"
+"hip-mtp-n3-t28-ub1024","hip","262144","True","False","True","0","256","21.84","64.94","20.14","0.7061","173","245","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t28-ub1024-bfdbdcb4.err.log"
+"hip-mtp-n3-t24-ub1024","hip","262144","True","False","True","0","256","21.71","65.66","20.08","0.7061","173","245","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t24-ub1024-70933f2e.err.log"
+"hip-mtp-n3-t28-ub1536","hip","262144","True","False","True","0","256","21.86","69.26","20.27","0.7061","173","245","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t28-ub1536-eb2ed6eb.err.log"
+"hip-mtp-n4-t24-ub1536","hip","262144","True","False","True","0","256","21.54","69.31","20","0.6399","183","286","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n4-t24-ub1536-306a1ec6.err.log"

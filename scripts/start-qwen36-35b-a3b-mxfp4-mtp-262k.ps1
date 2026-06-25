@@ -15,7 +15,11 @@ param(
     ),
     [string]$ServerPath = (Join-Path $HOME ".unsloth\llama.cpp\build\bin\Release\llama-server.exe"),
     [ValidateSet("on", "off", "auto")]
-    [string]$Reasoning = "off"
+    [string]$Reasoning = "off",
+    [ValidateRange(-1, 2147483647)]
+    [int]$ReasoningBudget = -1,
+    [switch]$KvUnified,
+    [switch]$Mlock
 )
 
 $ErrorActionPreference = "Stop"
@@ -58,38 +62,54 @@ $ResolvedModelPath = Resolve-QwenMxfp4Model
 Write-Host "Starting Qwen3.6 35B-A3B MXFP4_MOE MTP on http://127.0.0.1:$Port/v1"
 Write-Host "Model: $ResolvedModelPath"
 Write-Host "Context: $Context, DraftN: $DraftN, Threads: $Threads, UBatch: $UBatchSize, Reasoning: $Reasoning"
+Write-Host "KV unified: $([bool]$KvUnified), Metrics: on, Mlock: $([bool]$Mlock)"
 
-& $ServerPath `
-    -m $ResolvedModelPath `
-    --host 127.0.0.1 `
-    --port $Port `
-    -c $Context `
-    --parallel 1 `
-    --flash-attn on `
-    --no-context-shift `
-    -ngl 999 `
-    --metrics `
-    --jinja `
-    --reasoning $Reasoning `
-    --temp 0.6 `
-    --top-p 0.95 `
-    --top-k 20 `
-    --min-p 0.00 `
-    --cache-type-k f16 `
-    --cache-type-v f16 `
-    --spec-draft-type-k f16 `
-    --spec-draft-type-v f16 `
-    --spec-type draft-mtp `
-    --spec-draft-n-max $DraftN `
-    --spec-draft-ngl 999 `
-    --batch-size $BatchSize `
-    --ubatch-size $UBatchSize `
-    --threads $Threads `
-    --threads-batch $ThreadsBatch `
-    --poll 100 `
-    --poll-batch 1 `
-    --no-mmap `
-    --no-mmproj `
-    --cache-ram 0 `
-    --ctx-checkpoints 0 `
-    --no-cache-prompt
+$llamaArgs = @(
+    "-m", $ResolvedModelPath,
+    "--host", "127.0.0.1",
+    "--port", "$Port",
+    "-c", "$Context",
+    "--parallel", "1",
+    "--flash-attn", "on",
+    "--no-context-shift",
+    "-ngl", "999",
+    "--metrics",
+    "--jinja",
+    "--reasoning", $Reasoning,
+    "--temp", "0.6",
+    "--top-p", "0.95",
+    "--top-k", "20",
+    "--min-p", "0.00",
+    "--cache-type-k", "f16",
+    "--cache-type-v", "f16",
+    "--spec-draft-type-k", "f16",
+    "--spec-draft-type-v", "f16",
+    "--spec-type", "draft-mtp",
+    "--spec-draft-n-max", "$DraftN",
+    "--spec-draft-ngl", "999",
+    "--batch-size", "$BatchSize",
+    "--ubatch-size", "$UBatchSize",
+    "--threads", "$Threads",
+    "--threads-batch", "$ThreadsBatch",
+    "--poll", "100",
+    "--poll-batch", "1",
+    "--no-mmap",
+    "--no-mmproj",
+    "--cache-ram", "0",
+    "--ctx-checkpoints", "0",
+    "--no-cache-prompt"
+)
+
+if ($KvUnified) {
+    $llamaArgs += "--kv-unified"
+}
+
+if ($Mlock) {
+    $llamaArgs += "--mlock"
+}
+
+if ($Reasoning -ne "off") {
+    $llamaArgs += @("--reasoning-budget", "$ReasoningBudget")
+}
+
+& $ServerPath @llamaArgs

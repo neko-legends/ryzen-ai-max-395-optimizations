@@ -1,0 +1,2 @@
+"case","backend","context","kv_unified","mlock","metrics","cache_ram","completion_tokens","eval_tps","prompt_tps","wall_tps","draft_acceptance","draft_accepted","draft_generated","ngram_accepted","log"
+"hip-mtp-n3-t24-ub1024","hip","262144","False","False","True","0","256","22.03","69.61","20.4","0.7061","173","245","0","C:\Users\Jun\AppData\Local\Temp\hip-mtp-n3-t24-ub1024-e4fe63a5.err.log"

@@ -11,7 +11,14 @@ param(
         (Join-Path $HOME "Downloads"),
         (Join-Path $HOME ".cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots")
     ),
-    [string]$OutCsv = ""
+    [string]$OutCsv = "",
+    [switch]$KvUnified,
+    [switch]$Mlock,
+    [switch]$Metrics,
+    [switch]$FitOff,
+    [int]$CacheRam = 0,
+    [string]$HipServerPath = (Join-Path $HOME ".unsloth\llama.cpp\build\bin\Release\llama-server.exe"),
+    [string]$VulkanServerPath = (Join-Path $HOME ".cache\llama.cpp\b9704-vulkan\llama-server.exe")
 )
 
 $ErrorActionPreference = "Stop"
@@ -47,9 +54,9 @@ function Resolve-LlamaServer {
     param([ValidateSet("hip", "vulkan")] [string]$Backend)
 
     if ($Backend -eq "vulkan") {
-        $server = Join-Path $HOME ".cache\llama.cpp\b9704-vulkan\llama-server.exe"
+        $server = $VulkanServerPath
     } else {
-        $server = Join-Path $HOME ".unsloth\llama.cpp\build\bin\Release\llama-server.exe"
+        $server = $HipServerPath
     }
 
     if (-not (Test-Path -LiteralPath $server)) {
@@ -339,10 +346,27 @@ function Invoke-QwenBenchCase {
         "--reasoning", "off",
         "--no-mmproj",
         "-fa", "on",
+        "--cache-type-k", "f16",
+        "--cache-type-v", "f16",
+        "--spec-draft-type-k", "f16",
+        "--spec-draft-type-v", "f16",
         "--no-cache-prompt",
-        "--cache-ram", "0",
+        "--cache-ram", "$CacheRam",
         "--ctx-checkpoints", "0"
     ) + $Spec.Extra
+
+    if ($KvUnified) {
+        $args += "--kv-unified"
+    }
+    if ($Mlock) {
+        $args += "--mlock"
+    }
+    if ($Metrics) {
+        $args += "--metrics"
+    }
+    if ($FitOff) {
+        $args += @("--fit", "off")
+    }
 
     Write-Host "Running $($Spec.Name) on $($Spec.Backend)..." -ForegroundColor Cyan
     $process = Start-Process -FilePath $server -ArgumentList $args -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru -WindowStyle Hidden
@@ -396,6 +420,11 @@ function Invoke-QwenBenchCase {
             case = $Spec.Name
             backend = $Spec.Backend
             context = $Spec.Ctx
+            kv_unified = [bool]$KvUnified
+            mlock = [bool]$Mlock
+            metrics = [bool]$Metrics
+            fit_off = [bool]$FitOff
+            cache_ram = $CacheRam
             completion_tokens = $response.usage.completion_tokens
             eval_tps = [math]::Round($evalTps, 2)
             prompt_tps = [math]::Round($promptTps, 2)
