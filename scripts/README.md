@@ -40,4 +40,4 @@ The Ornith downloader prefers `hf` or `huggingface-cli` when installed. If neith
 `ornith-1.0-35b-Q5_K_M.gguf` is about `23.0 GiB`.
 `ornith-1.0-35b-Q4_K_M.gguf` is smaller and is the better apples-to-apples comparison when the rest of the local GGUF rows are Q4-class.
 
-The Ornith benchmark scripts accept `-PromptFile`, `-PromptStyle`, and `-TargetPromptTokens` for long-context baselines. The copied `book-context-200k.txt` fixture is a target-200K prompt, but Ornith Q4_K_M and Q5_K_M counted it as `174588` prompt tokens in the 262K benchmark runs.
+The Ornith benchmark scripts accept `-PromptFile`, `-PromptStyle`, and `-TargetPromptTokens` for long-context baselines. The copied `book-context-200k.txt` fixture is a target-200K prompt, but Ornith Q4_K_M and Q5_K_M counted it as `174588` prompt tokens in the 262K benchmark runs. Treat the full-request wall time from that run as cold one-shot prefill latency, not steady interactive coding throughput.

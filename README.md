@@ -2,7 +2,7 @@
 
 ![Ryzen AI Max+ 395 262K tok/s comparison](docs/assets/qwen36-262k-tok-s.svg)
 
-In the chart, `eval` means model generation speed only, while `wall` means full request speed and is closer to what a user feels. Chart source rows are in `docs/assets/qwen36-262k-tok-s.csv`. Completion and prompt lengths vary across the selected source-of-truth runs, so read it as a profile ranking rather than a fully controlled sweep.
+In the chart, `eval` means model generation speed only, while `wall` means full request speed and is closer to what a user feels. Chart source rows are in `docs/assets/qwen36-262k-tok-s.csv`. Completion lengths vary across the selected source-of-truth runs, so read it as a profile ranking rather than a fully controlled sweep.
 
 Benchmarks and launch profiles for running large GGUF models on AMD Ryzen AI Max+ 395 / Radeon 8060S Strix Halo systems.
 
@@ -141,7 +141,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\ornith-1.0
   -TargetPromptTokens 200000
 ```
 
-On Ornith Q4_K_M, that copied fixture counted as `174588` prompt tokens and measured `197.44 prompt tok/s`, `18.37 eval tok/s`, and `1.09 wall tok/s` for 1024 generated tokens. Ornith Q5_K_M on the same fixture measured `202.92 prompt tok/s`, `18.03 eval tok/s`, and `1.12 wall tok/s`.
+Cold 174K-context prefill note: this sends the entire fixture in one request. It is useful for measuring prefill speed and generation speed after the cache is already deep, but it should not be compared to normal tok/s chart rows as steady interactive coding throughput. In a coding session, context usually grows turn by turn and prompt cache reuse changes what the user feels.
+
+| Quant | Prompt tokens | Cold prefill | Prompt eval | Generation at 174K ctx | Full one-shot latency |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Q4_K_M | 174588 | 884.3s | 197.44 tok/s | 18.37 tok/s | 940.2s |
+| Q5_K_M | 174588 | 860.4s | 202.92 tok/s | 18.03 tok/s | 917.4s |
 
 Download Ornith 1.0 35B Q5_K_M:
 

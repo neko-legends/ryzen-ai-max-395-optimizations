@@ -25,11 +25,6 @@ def esc(value):
 
 
 def short_label(label):
-    if label.startswith("Ornith 1.0 35B Q4_K_M 174.6K prompt"):
-        return "Ornith Q4_K_M - 174.6K prompt"
-    if label.startswith("Ornith 1.0 35B Q5_K_M 174.6K prompt"):
-        return "Ornith Q5_K_M - 174.6K prompt"
-
     replacements = {
         "UD-Q4_K_XL draft-mtp ": "UD-Q4_K_XL - ",
         "UD-Q4_K_XL Studio-like baseline": "UD-Q4_K_XL - Studio-like baseline",
@@ -77,7 +72,7 @@ def render():
         f'<rect x="20" y="20" width="{width - 40}" height="{card_h}" rx="8" fill="{CARD}" stroke="{BORDER}"/>',
         f'<text x="42" y="62" font-family="{FONT}" font-size="30" font-weight="700" fill="{TEXT}">Ryzen AI Max+ 395 262K tok/s comparison</text>',
         f'<text x="42" y="91" font-family="{FONT}" font-size="15" fill="{MUTED}">Radeon 8060S, Windows HIP/ROCm, single-slot llama.cpp runs</text>',
-        f'<text x="42" y="116" font-family="{FONT}" font-size="13" fill="{MUTED}">Curated from source-of-truth profile rows. Completion and prompt lengths vary, so treat this as a profile ranking rather than a fully controlled sweep.</text>',
+        f'<text x="42" y="116" font-family="{FONT}" font-size="13" fill="{MUTED}">Curated from source-of-truth profile rows. Completion lengths vary, so treat this as a profile ranking rather than a fully controlled sweep.</text>',
         f'<rect x="855" y="53" width="14" height="14" rx="2" fill="{EVAL}"/>',
         f'<text x="877" y="65" font-family="{FONT}" font-size="14" fill="{TEXT}">generation only (eval)</text>',
         f'<rect x="855" y="78" width="14" height="14" rx="2" fill="{WALL}"/>',
