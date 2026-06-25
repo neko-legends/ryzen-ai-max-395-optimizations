@@ -4,7 +4,9 @@ Scripts are grouped by runtime and integration:
 
 - `hermes/`: Hermes Desktop custom-provider helpers.
 - `localai/qwen36-35b-a3b-mtp-gguf/`: AMD HIP/ROCm llama.cpp launch and benchmark scripts for the Qwen3.6 35B A3B MTP GGUF family.
-- `localai/ornith-1.0-35b-gguf/`: downloader and benchmark scripts for DeepReinforce Ornith 1.0 35B GGUF.
+- `localai/ornith-1.0-35b-gguf/`: downloader and benchmark scripts for DeepReinforce Ornith 1.0 35B GGUF Q4_K_M and Q5_K_M.
+
+Shared benchmark prompt fixtures live under `..\benchmarks\prompts`. They are copied from `C:\git\nvidia-local-llm-profiles\benchmarks\prompts` so the Ryzen runs can use the same short and 200K-style BookContext prompts as the NVIDIA baseline repo.
 
 ## Local Model Locations
 
@@ -36,3 +38,6 @@ The Ornith downloader prefers `hf` or `huggingface-cli` when installed. If neith
 ```
 
 `ornith-1.0-35b-Q5_K_M.gguf` is about `23.0 GiB`.
+`ornith-1.0-35b-Q4_K_M.gguf` is smaller and is the better apples-to-apples comparison when the rest of the local GGUF rows are Q4-class.
+
+The Ornith benchmark scripts accept `-PromptFile`, `-PromptStyle`, and `-TargetPromptTokens` for long-context baselines. The copied `book-context-200k.txt` fixture is a target-200K prompt, but Ornith Q4_K_M and Q5_K_M counted it as `174588` prompt tokens in the 262K benchmark runs.

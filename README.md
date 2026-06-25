@@ -2,7 +2,7 @@
 
 ![Ryzen AI Max+ 395 262K tok/s comparison](docs/assets/qwen36-262k-tok-s.svg)
 
-In the chart, `eval` means model generation speed only, while `wall` means full request speed and is closer to what a user feels. Chart source rows are in `docs/assets/qwen36-262k-tok-s.csv`. Completion lengths vary across the selected source-of-truth runs, so read it as a profile ranking rather than a fully controlled sweep.
+In the chart, `eval` means model generation speed only, while `wall` means full request speed and is closer to what a user feels. Chart source rows are in `docs/assets/qwen36-262k-tok-s.csv`. Completion and prompt lengths vary across the selected source-of-truth runs, so read it as a profile ranking rather than a fully controlled sweep.
 
 Benchmarks and launch profiles for running large GGUF models on AMD Ryzen AI Max+ 395 / Radeon 8060S Strix Halo systems.
 
@@ -27,7 +27,8 @@ If you are an AI agent helping with this repo, treat these files as the operatio
 - MXFP4_MOE tuned server launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`
 - MXFP4_MOE double-click launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`
 - Benchmark harness: `scripts/localai/qwen36-35b-a3b-mtp-gguf/bench-qwen36-mtp.ps1`
-- Ornith Q5_K_M scripts: `scripts/localai/ornith-1.0-35b-gguf/`
+- Ornith Q4_K_M and Q5_K_M scripts: `scripts/localai/ornith-1.0-35b-gguf/`
+- Cross-repo prompt fixtures: `benchmarks/prompts/`
 - Raw benchmark CSVs: `results/qwen36-35b-a3b-mtp-262k/`
 
 Important behavior:
@@ -114,6 +115,34 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b
 
 The benchmark harness searches `%USERPROFILE%\Downloads` and the default Hugging Face cache under `%USERPROFILE%\.cache\huggingface\...`. If your GGUF lives somewhere else, pass `-ModelPath C:\path\to\Qwen3.6-35B-A3B-MXFP4_MOE.gguf`.
 
+Download Ornith 1.0 35B Q4_K_M:
+
+```text
+scripts\localai\ornith-1.0-35b-gguf\download-ornith-1.0-35b-q4-k-m.bat
+```
+
+Benchmark Ornith Q4_K_M with a no-MTP HIP profile:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\ornith-1.0-35b-gguf\bench-ornith-1.0-35b-q4-k-m.ps1 `
+  -Case hip-no-mtp-t28-ub1024 `
+  -Context 262144
+```
+
+Benchmark Ornith Q4_K_M against the NVIDIA-local-LLM-profiles 200K-style fixture:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\ornith-1.0-35b-gguf\bench-ornith-1.0-35b-q4-k-m.ps1 `
+  -Case hip-no-mtp-t28-ub1024 `
+  -Context 262144 `
+  -MaxTokens 1024 `
+  -PromptFile benchmarks\prompts\book-context-200k.txt `
+  -PromptStyle BookContext `
+  -TargetPromptTokens 200000
+```
+
+On Ornith Q4_K_M, that copied fixture counted as `174588` prompt tokens and measured `197.44 prompt tok/s`, `18.37 eval tok/s`, and `1.09 wall tok/s` for 1024 generated tokens. Ornith Q5_K_M on the same fixture measured `202.92 prompt tok/s`, `18.03 eval tok/s`, and `1.12 wall tok/s`.
+
 Download Ornith 1.0 35B Q5_K_M:
 
 ```text
@@ -122,7 +151,7 @@ scripts\localai\ornith-1.0-35b-gguf\download-ornith-1.0-35b-q5-k-m.bat
 
 The Q5_K_M GGUF is about `23.0 GiB`, so check free disk space before starting the download.
 
-Benchmark Ornith with a no-MTP HIP profile:
+Benchmark Ornith Q5_K_M with a no-MTP HIP profile:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\ornith-1.0-35b-gguf\bench-ornith-1.0-35b-q5-k-m.ps1 `
@@ -176,7 +205,8 @@ See `docs/integrations/hermes-desktop.md`.
 
 - `scripts/README.md`: script layout and local model storage notes.
 - `scripts/localai/qwen36-35b-a3b-mtp-gguf/`: Qwen GGUF server launchers and MTP benchmark harness.
-- `scripts/localai/ornith-1.0-35b-gguf/`: Ornith Q5_K_M downloader and no-MTP benchmark harness.
+- `scripts/localai/ornith-1.0-35b-gguf/`: Ornith Q4_K_M and Q5_K_M downloaders and no-MTP benchmark harness.
+- `benchmarks/prompts/`: copied NVIDIA-local-LLM-profiles prompt fixtures for short and long context baselines.
 - `scripts/hermes/`: Hermes saved-provider and active-default helpers.
 - `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`: model-specific tuning summary and agent notes.
 - `docs/models/qwen3.6-35b-a3b-mtp-mxfp4_moe.md`: MXFP4_MOE tuning summary and agent notes.

@@ -13,6 +13,10 @@ param(
         (Join-Path $HOME ".cache\huggingface\hub\models--deepreinforce-ai--Ornith-1.0-35B-GGUF\snapshots")
     ),
     [string]$OutCsv = "",
+    [string]$Prompt = "",
+    [string]$PromptFile = "",
+    [string]$PromptStyle = "default",
+    [int]$TargetPromptTokens = 0,
     [string]$ServerPath = (Join-Path $HOME ".unsloth\llama.cpp\build\bin\Release\llama-server.exe"),
     [string]$ModelId = "ornith-1.0-35b-q5-k-m",
     [ValidateSet("on", "off", "auto")]
@@ -23,15 +27,145 @@ param(
     [string]$CacheTypeV = "f16",
     [int]$CacheRam = 0,
     [switch]$Mlock,
+    [int]$RequestTimeoutSeconds = 3600,
     [int]$StartupTimeoutSeconds = 300
 )
 
 $ErrorActionPreference = "Stop"
+Add-Type -AssemblyName System.Web
 $Case = @($Case | ForEach-Object { $_ -split "," } | Where-Object { $_ })
 
-$Prompt = @"
+function Get-RepoRoot {
+    (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..\..\..")).Path
+}
+
+function Resolve-RepoPath {
+    param([string]$Path)
+
+    if ([System.IO.Path]::IsPathRooted($Path)) {
+        return (Resolve-Path -LiteralPath $Path).Path
+    }
+
+    return (Resolve-Path -LiteralPath (Join-Path (Get-RepoRoot) $Path)).Path
+}
+
+function Get-TextSha256 {
+    param([string]$Text)
+
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
+        return ([BitConverter]::ToString($sha.ComputeHash($bytes))).Replace("-", "").ToLowerInvariant()
+    } finally {
+        $sha.Dispose()
+    }
+}
+
+function Resolve-BenchmarkPrompt {
+    if ($Prompt -and $PromptFile) {
+        throw "Pass either -Prompt or -PromptFile, not both."
+    }
+
+    if ($PromptFile) {
+        $resolvedPromptFile = Resolve-RepoPath -Path $PromptFile
+        $promptText = Get-Content -LiteralPath $resolvedPromptFile -Raw -Encoding UTF8
+        return [pscustomobject]@{
+            Text = $promptText
+            Source = $resolvedPromptFile
+            Chars = $promptText.Length
+            Sha256 = (Get-FileHash -LiteralPath $resolvedPromptFile -Algorithm SHA256).Hash.ToLowerInvariant()
+        }
+    }
+
+    if ($Prompt) {
+        return [pscustomobject]@{
+            Text = $Prompt
+            Source = "inline"
+            Chars = $Prompt.Length
+            Sha256 = Get-TextSha256 -Text $Prompt
+        }
+    }
+
+    $defaultPrompt = @"
 Write a compact but realistic PowerShell module that watches a project folder for new .log files, keeps only the newest five logs per subfolder, and prints a short JSON summary. Include helper functions, validation, and comments where useful. Return code only.
 "@
+
+    return [pscustomobject]@{
+        Text = $defaultPrompt
+        Source = "default"
+        Chars = $defaultPrompt.Length
+        Sha256 = Get-TextSha256 -Text $defaultPrompt
+    }
+}
+
+function Invoke-JsonPost {
+    param(
+        [string]$Uri,
+        [string]$Body,
+        [int]$TimeoutSeconds
+    )
+
+    $request = [System.Net.WebRequest]::Create($Uri)
+    $request.Method = "POST"
+    $request.ContentType = "application/json"
+    $request.Accept = "application/json"
+    $request.Timeout = $TimeoutSeconds * 1000
+    $request.ReadWriteTimeout = $TimeoutSeconds * 1000
+
+    $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($Body)
+    $request.ContentLength = $bodyBytes.Length
+
+    $requestStream = $request.GetRequestStream()
+    try {
+        $requestStream.Write($bodyBytes, 0, $bodyBytes.Length)
+    } finally {
+        $requestStream.Dispose()
+    }
+
+    try {
+        $response = $request.GetResponse()
+    } catch [System.Net.WebException] {
+        if ($_.Exception.Response) {
+            $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+            try {
+                $errorBody = $reader.ReadToEnd()
+            } finally {
+                $reader.Dispose()
+            }
+            throw "HTTP $([int]$_.Exception.Response.StatusCode) $($_.Exception.Response.StatusDescription): $errorBody"
+        }
+        throw
+    }
+
+    try {
+        $reader = New-Object System.IO.StreamReader($response.GetResponseStream())
+        try {
+            return $reader.ReadToEnd() | ConvertFrom-Json
+        } finally {
+            $reader.Dispose()
+        }
+    } finally {
+        $response.Dispose()
+    }
+}
+
+function New-ChatCompletionJson {
+    param(
+        [string]$Model,
+        [string]$Content
+    )
+
+    $escapedModel = [System.Web.HttpUtility]::JavaScriptStringEncode($Model)
+    $escapedContent = [System.Web.HttpUtility]::JavaScriptStringEncode($Content)
+    $temperatureText = $Temperature.ToString([System.Globalization.CultureInfo]::InvariantCulture)
+
+    return ('{{"model":"{0}","messages":[{{"role":"user","content":"{1}"}}],"max_tokens":{2},"temperature":{3},"seed":{4},"stream":false}}' -f `
+        $escapedModel,
+        $escapedContent,
+        $MaxTokens,
+        $temperatureText,
+        $Seed)
+}
 
 function Resolve-OrnithModel {
     if ($ModelPath) {
@@ -92,7 +226,8 @@ function Get-CaseSpec {
 function Invoke-OrnithBenchCase {
     param(
         [pscustomobject]$Spec,
-        [string]$Model
+        [string]$Model,
+        [pscustomobject]$PromptSpec
     )
 
     if (-not (Test-Path -LiteralPath $ServerPath)) {
@@ -156,17 +291,10 @@ function Invoke-OrnithBenchCase {
 
         $rows = @()
         for ($run = 1; $run -le $Runs; $run++) {
-            $body = @{
-                model = $ModelId
-                messages = @(@{ role = "user"; content = $Prompt })
-                max_tokens = $MaxTokens
-                temperature = $Temperature
-                seed = $Seed
-                stream = $false
-            } | ConvertTo-Json -Depth 8
+            $body = New-ChatCompletionJson -Model $ModelId -Content $PromptSpec.Text
 
             $wall = [System.Diagnostics.Stopwatch]::StartNew()
-            $response = Invoke-RestMethod -Uri "http://127.0.0.1:$Port/v1/chat/completions" -Method Post -ContentType "application/json" -Body $body -TimeoutSec 1200
+            $response = Invoke-JsonPost -Uri "http://127.0.0.1:$Port/v1/chat/completions" -Body $body -TimeoutSeconds $RequestTimeoutSeconds
             $wall.Stop()
 
             Start-Sleep -Milliseconds 500
@@ -191,6 +319,11 @@ function Invoke-OrnithBenchCase {
                 cache_type_v = $CacheTypeV
                 cache_ram = $CacheRam
                 max_tokens = $MaxTokens
+                prompt_style = $PromptStyle
+                target_prompt_tokens = $TargetPromptTokens
+                prompt_source = $PromptSpec.Source
+                prompt_chars = $PromptSpec.Chars
+                prompt_sha256 = $PromptSpec.Sha256
                 prompt_tokens = $promptTokens
                 completion_tokens = $completionTokens
                 total_tokens = $totalTokens
@@ -212,14 +345,18 @@ function Invoke-OrnithBenchCase {
 }
 
 $resolvedModelPath = Resolve-OrnithModel
+$resolvedPrompt = Resolve-BenchmarkPrompt
+Write-Host ("Prompt source: {0}" -f $resolvedPrompt.Source)
+Write-Host ("Prompt chars: {0:n0}, sha256: {1}" -f $resolvedPrompt.Chars, $resolvedPrompt.Sha256)
+
 $results = foreach ($caseName in $Case) {
-    Invoke-OrnithBenchCase -Spec (Get-CaseSpec -Name $caseName) -Model $resolvedModelPath
+    Invoke-OrnithBenchCase -Spec (Get-CaseSpec -Name $caseName) -Model $resolvedModelPath -PromptSpec $resolvedPrompt
 }
 
 $results | Format-Table -AutoSize
 
 if (-not $OutCsv) {
-    $repoRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..\..\..")).Path
+    $repoRoot = Get-RepoRoot
     $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
     $OutCsv = Join-Path $repoRoot "results\ornith-1.0-35b-gguf\ornith-1.0-35b-q5-k-m-$stamp.csv"
 }
