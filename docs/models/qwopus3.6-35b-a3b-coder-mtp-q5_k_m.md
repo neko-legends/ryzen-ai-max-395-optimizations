@@ -63,7 +63,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwopus36-3
 
 ## Launch Profile
 
-No dedicated benchmark has been run for this model yet. The launcher intentionally reuses the current best Qwen MXFP4 MTP profile:
+The launcher intentionally reuses the current best Qwen MXFP4 MTP profile:
 
 ```powershell
 -c 262144 `
@@ -81,6 +81,17 @@ No dedicated benchmark has been run for this model yet. The launcher intentional
 --parallel 1 `
 --reasoning off
 ```
+
+## Quick Benchmark
+
+One quick 262K check was run after install, using the same short benchmark prompt as the Qwen harness and 512 generated tokens:
+
+| Case | Eval tok/s | Wall tok/s | Prompt tok/s | Draft acceptance |
+| --- | ---: | ---: | ---: | ---: |
+| `draft-mtp n=3, t28, ub1024` | 37.94 | 36.54 | 128.18 | 0.6928 |
+| `no MTP, t28, ub1024` | 26.31 | 25.77 | 159.01 | 0.0000 |
+
+MTP improved wall throughput by about 42% on this prompt. Qwopus Q5_K_M is slower than the local Qwen MXFP4 profile, but it is a coder fine-tune and should be evaluated on coding-agent quality as well as raw tok/s.
 
 Retune later if throughput or acceptance looks weak. The first things to try would be `--spec-draft-n-max 2`, `threads=24`, and `ubatch=1536`, because those were competitive on the other Qwen-family GGUFs.
 

@@ -143,7 +143,7 @@ Qwopus runs on:
 http://127.0.0.1:8004/v1
 ```
 
-Qwopus uses the same 262K MTP launch profile as the current Qwen MXFP4 profile (`draft n=3`, `threads=28`, `ubatch=1024`, f16 KV). It has not been separately benchmarked in this repo yet.
+Qwopus uses the same 262K MTP launch profile as the current Qwen MXFP4 profile (`draft n=3`, `threads=28`, `ubatch=1024`, f16 KV). A quick 512-token check reached `37.94 eval tok/s` and `36.54 wall tok/s` with MTP, versus `26.31 eval tok/s` and `25.77 wall tok/s` without MTP.
 
 Download Ornith 1.0 35B Q4_K_M:
 
