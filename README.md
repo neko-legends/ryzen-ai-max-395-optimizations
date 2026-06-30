@@ -34,11 +34,12 @@ If you are an AI agent helping with this repo, treat these files as the operatio
 - MXFP4_MOE double-click launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`
 - Qwopus Coder install launcher: `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/install-qwopus36-35b-a3b-coder-mtp-q5-k-m.bat`
 - Qwopus Coder server launcher: `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/start-qwopus36-35b-a3b-coder-mtp-q5-k-m-262k.bat`
+- Qwopus Coder 10K/200K fixture benchmark: `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/bench-qwopus36-10k-200k-mtp-n2.bat`
 - Benchmark harness: `scripts/localai/qwen36-35b-a3b-mtp-gguf/bench-qwen36-mtp.ps1`
 - Ornith Q4_K_M and Q5_K_M scripts: `scripts/localai/ornith-1.0-35b-gguf/`
 - Cross-repo prompt fixtures: `benchmarks/prompts/`
 - Ornith-specific context chart: `docs/assets/ornith-262k-context.svg`
-- Raw benchmark CSVs: `results/qwen36-35b-a3b-mtp-262k/`
+- Raw benchmark CSVs: `results/`
 
 Important behavior:
 
@@ -143,7 +144,20 @@ Qwopus runs on:
 http://127.0.0.1:8004/v1
 ```
 
-Qwopus uses the same 262K MTP launch profile as the current Qwen MXFP4 profile (`draft n=3`, `threads=28`, `ubatch=1024`, f16 KV). A quick 512-token check reached `37.94 eval tok/s` and `36.54 wall tok/s` with MTP, versus `26.31 eval tok/s` and `25.77 wall tok/s` without MTP.
+Qwopus uses a 262K MTP launch profile with `draft n=2`, `threads=28`, `ubatch=1024`, and f16 KV. A quick 512-token smoke check with `n=3` reached `37.94 eval tok/s` and `36.54 wall tok/s` with MTP, versus `26.31 eval tok/s` and `25.77 wall tok/s` without MTP.
+
+The more useful Qwopus file-prompt benchmark uses the copied NVIDIA-local-LLM-profiles book fixtures and 1024 requested generated tokens:
+
+```text
+scripts\localai\qwopus36-35b-a3b-coder-mtp-gguf\bench-qwopus36-10k-200k-mtp-n2.bat
+```
+
+| Prompt fixture | Prompt tokens | Prompt eval tok/s | Generation tok/s | Full wall tok/s | Wall time |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `book-context-10k.txt` | 8,907 | 623.2 | 40.5 | 13.21 | 77.50s |
+| `book-context-200k.txt` | 174,588 | 215.0 | 23.9 | 1.15 | 892.66s |
+
+Conclusion for agents: MTP helps decode speed, but cold 200K prefill dominates full one-shot latency. Do not use tiny prompts to claim 200K-context performance.
 
 Download Ornith 1.0 35B Q4_K_M:
 
@@ -250,7 +264,8 @@ See `docs/integrations/hermes-desktop.md`.
 
 - `scripts/README.md`: script layout and local model storage notes.
 - `scripts/localai/qwen36-35b-a3b-mtp-gguf/`: Qwen GGUF server launchers and MTP benchmark harness.
-- `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/`: Qwopus Coder Q5_K_M downloader, installer, and MTP server launcher.
+- `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/`: Qwopus Coder Q5_K_M downloader, installer, MTP server launcher, and file-prompt benchmark.
+- `scripts/localai/tools/`: helper source/scripts such as the tiny `llama-cli.exe` launcher used by file-prompt benchmarks.
 - `scripts/localai/ornith-1.0-35b-gguf/`: Ornith Q4_K_M and Q5_K_M downloaders and no-MTP benchmark harness.
 - `benchmarks/prompts/`: copied NVIDIA-local-LLM-profiles prompt fixtures for short and long context baselines.
 - `scripts/hermes/`: Hermes saved-provider and active-default helpers.
@@ -258,7 +273,7 @@ See `docs/integrations/hermes-desktop.md`.
 - `docs/models/qwen3.6-35b-a3b-mtp-mxfp4_moe.md`: MXFP4_MOE tuning summary and agent notes.
 - `docs/models/qwopus3.6-35b-a3b-coder-mtp-q5_k_m.md`: Qwopus Coder setup summary and agent notes.
 - `docs/integrations/hermes-desktop.md`: Hermes Desktop local-provider setup.
-- `results/qwen36-35b-a3b-mtp-262k/`: raw CSV benchmark results.
+- `results/`: raw CSV benchmark results by model/profile.
 - `patches/unsloth-studio-rocm-strix-mtp.patch`: patch record for applying the Studio backend defaults.
 
 ## Agent Recipe For Other Local Models
@@ -283,7 +298,7 @@ $server = "$HOME\.unsloth\llama.cpp\build\bin\Release\llama-server.exe"
 
 4. Tune in this order:
 
-- `--spec-draft-n-max`: try `1..6`; `3` was best for `MXFP4_MOE`, while `2` was best for `UD-Q4_K_XL`.
+- `--spec-draft-n-max`: try `1..6`; `3` was best for `MXFP4_MOE`, while `2` was best for `UD-Q4_K_XL` and is the current Qwopus long-context baseline.
 - Threads: try `16`, `20`, `24`, `28`; `28` was narrowly best for `MXFP4_MOE`, while `24` stayed the safer low-CPU fallback.
 - Microbatch: try `512`, `1024`, `1536`, `2048`; `1024` was best for `MXFP4_MOE`, while `1536` was best for `UD-Q4_K_XL`.
 - Batch: keep `-b 2048` unless a fresh sweep proves otherwise.

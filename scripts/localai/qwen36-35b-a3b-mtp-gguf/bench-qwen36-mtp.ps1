@@ -5,6 +5,10 @@ param(
     [int]$Context = 262144,
     [double]$Temperature = 0.0,
     [int]$Seed = 1234,
+    [string]$PromptFile = "",
+    [string]$PromptStyle = "Builtin",
+    [int]$TargetPromptTokens = 0,
+    [int]$RequestTimeoutSec = 1800,
     [string]$ModelPath = "",
     [string]$ModelPattern = "Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf",
     [string[]]$SearchRoots = @(
@@ -24,9 +28,31 @@ param(
 $ErrorActionPreference = "Stop"
 $Case = @($Case | ForEach-Object { $_ -split "," } | Where-Object { $_ })
 
-$Prompt = @"
+$DefaultPrompt = @"
 Write a compact but realistic PowerShell module that watches a project folder for new .log files, keeps only the newest five logs per subfolder, and prints a short JSON summary. Include helper functions, validation, and comments where useful. Return code only.
 "@
+
+if ($PromptFile) {
+    $ResolvedPromptFile = (Resolve-Path -LiteralPath $PromptFile).Path
+    $Prompt = Get-Content -LiteralPath $ResolvedPromptFile -Raw
+    if ($PromptStyle -eq "Builtin") {
+        $PromptStyle = [System.IO.Path]::GetFileNameWithoutExtension($ResolvedPromptFile)
+    }
+} else {
+    $ResolvedPromptFile = ""
+    $Prompt = $DefaultPrompt
+}
+
+$PromptSha256 = ""
+if ($Prompt) {
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($Prompt)
+        $PromptSha256 = ([System.BitConverter]::ToString($sha.ComputeHash($bytes))).Replace("-", "").ToLowerInvariant()
+    } finally {
+        $sha.Dispose()
+    }
+}
 
 function Resolve-QwenModel {
     $candidates = @()
@@ -399,7 +425,7 @@ function Invoke-QwenBenchCase {
         } | ConvertTo-Json -Depth 8
 
         $wall = [System.Diagnostics.Stopwatch]::StartNew()
-        $response = Invoke-RestMethod -Uri "http://127.0.0.1:$Port/v1/chat/completions" -Method Post -ContentType "application/json" -Body $body -TimeoutSec 600
+        $response = Invoke-RestMethod -Uri "http://127.0.0.1:$Port/v1/chat/completions" -Method Post -ContentType "application/json" -Body $body -TimeoutSec $RequestTimeoutSec
         $wall.Stop()
 
         Start-Sleep -Milliseconds 500
@@ -425,9 +451,17 @@ function Invoke-QwenBenchCase {
             metrics = [bool]$Metrics
             fit_off = [bool]$FitOff
             cache_ram = $CacheRam
+            prompt_style = $PromptStyle
+            target_prompt_tokens = $TargetPromptTokens
+            prompt_source = if ($ResolvedPromptFile) { $ResolvedPromptFile } else { "builtin" }
+            prompt_chars = $Prompt.Length
+            prompt_sha256 = $PromptSha256
+            prompt_tokens = $response.usage.prompt_tokens
             completion_tokens = $response.usage.completion_tokens
+            total_tokens = $response.usage.total_tokens
             eval_tps = [math]::Round($evalTps, 2)
             prompt_tps = [math]::Round($promptTps, 2)
+            wall_seconds = [math]::Round($wall.Elapsed.TotalSeconds, 2)
             wall_tps = [math]::Round($response.usage.completion_tokens / $wall.Elapsed.TotalSeconds, 2)
             draft_acceptance = [math]::Round($acceptRate, 4)
             draft_accepted = $accepted

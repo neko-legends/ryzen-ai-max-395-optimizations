@@ -63,12 +63,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwopus36-3
 
 ## Launch Profile
 
-The launcher intentionally reuses the current best Qwen MXFP4 MTP profile:
+The server launcher defaults to the long-context Qwopus baseline:
 
 ```powershell
 -c 262144 `
 --spec-type draft-mtp `
---spec-draft-n-max 3 `
+--spec-draft-n-max 2 `
 --cache-type-k f16 --cache-type-v f16 `
 --spec-draft-type-k f16 --spec-draft-type-v f16 `
 -b 2048 -ub 1024 `
@@ -82,7 +82,9 @@ The launcher intentionally reuses the current best Qwen MXFP4 MTP profile:
 --reasoning off
 ```
 
-## Quick Benchmark
+`--spec-draft-n-max 2` is the safer default for this Qwopus profile. A short smoke test with `n=3` was faster than no MTP, but the file-prompt fixture run below uses `n=2`, matching the broad MTP recommendation and avoiding overfitting to a tiny prompt.
+
+## Benchmarks
 
 One quick 262K check was run after install, using the same short benchmark prompt as the Qwen harness and 512 generated tokens:
 
@@ -93,7 +95,34 @@ One quick 262K check was run after install, using the same short benchmark promp
 
 MTP improved wall throughput by about 42% on this prompt. Qwopus Q5_K_M is slower than the local Qwen MXFP4 profile, but it is a coder fine-tune and should be evaluated on coding-agent quality as well as raw tok/s.
 
-Retune later if throughput or acceptance looks weak. The first things to try would be `--spec-draft-n-max 2`, `threads=24`, and `ubatch=1536`, because those were competitive on the other Qwen-family GGUFs.
+The meaningful long-context run uses the copied NVIDIA-local-LLM-profiles book fixtures at `262144` context and `1024` requested generated tokens:
+
+| Prompt fixture | Prompt tokens | Prompt eval tok/s | Generation tok/s | Full wall tok/s | Wall time |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `book-context-10k.txt` | 8,907 | 623.2 | 40.5 | 13.21 | 77.50s |
+| `book-context-200k.txt` | 174,588 | 215.0 | 23.9 | 1.15 | 892.66s |
+
+Result CSV:
+
+```text
+results\qwopus36-35b-a3b-coder-mtp-gguf\qwopus-q5-cli-ctx262k-book-10k-200k-gen1024-mtp-n2-20260630-101249.csv
+```
+
+Conclusion: MTP helps decoding, but it does not solve cold 200K prompt prefill. At 174K prompt tokens, full one-shot wall speed is dominated by loading/prefill even though generation after the deep context still reaches `23.9 tok/s`.
+
+Retune later if throughput or acceptance looks weak. The first things to try would be `threads=24`, `ubatch=1536`, and `--spec-draft-n-max 3` on the same 10K/200K fixtures, because short prompts alone are not representative.
+
+To rerun the file-prompt benchmark:
+
+```text
+scripts\localai\qwopus36-35b-a3b-coder-mtp-gguf\bench-qwopus36-10k-200k-mtp-n2.bat
+```
+
+The benchmark uses `llama-cli.exe` for prompt files. If `%USERPROFILE%\.unsloth\llama.cpp\build\bin\Release\llama-cli.exe` is missing, build the small launcher first:
+
+```text
+scripts\localai\tools\build-llama-cli-launcher.bat
+```
 
 ## Hermes
 
@@ -121,3 +150,4 @@ Invoke-RestMethod http://127.0.0.1:8004/v1/models
 2. The default provider uses port `8004` to avoid renaming or clobbering the existing Qwen provider on port `8001`.
 3. Hermes sees only an OpenAI-compatible endpoint; start the Qwopus server before selecting the Qwopus provider.
 4. The model card emphasizes thinking-off coding-agent use, so do not enable reasoning by default for Hermes.
+5. Do not judge 200K-context usability from a 512-token smoke test. Use the 10K/200K book fixtures when changing MTP draft count, batch, ubatch, or KV settings.

@@ -2,7 +2,7 @@ param(
     [int]$Port = 8004,
     [int]$Context = 262144,
     [ValidateRange(1, 6)]
-    [int]$DraftN = 3,
+    [int]$DraftN = 2,
     [int]$Threads = 28,
     [int]$ThreadsBatch = 28,
     [int]$BatchSize = 2048,
