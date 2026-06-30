@@ -32,6 +32,12 @@ Default endpoint:
 http://127.0.0.1:8001/v1
 ```
 
+Qwopus Coder uses a separate endpoint so it can coexist with the Qwen provider in Hermes:
+
+```text
+http://127.0.0.1:8004/v1
+```
+
 ## Configure Hermes
 
 There are two different actions:
@@ -79,6 +85,25 @@ Then:
 4. Click `Edit Models...`.
 5. Choose `Qwen3.6 35B-A3B MXFP4 MTP 262K` from the custom/saved provider list.
 
+For Qwopus Coder, double-click:
+
+```text
+scripts\hermes\add-hermes-qwopus-coder-custom-provider.bat
+```
+
+This adds:
+
+```yaml
+custom_providers:
+- name: Qwopus3.6 35B-A3B Coder MTP Q5_K_M 262K
+  base_url: http://127.0.0.1:8004/v1
+  model: local
+  api_mode: chat_completions
+  models:
+    local:
+      context_length: 262144
+```
+
 ## Make It The Active Default
 
 This changes Hermes' default model provider. Run it when you want Hermes Desktop to use the local Qwen server by default.
@@ -120,6 +145,18 @@ $py = "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\python.exe"
 & $py -m hermes_cli.main config set model.api_mode chat_completions
 ```
 
+For Qwopus Coder, double-click:
+
+```text
+scripts\hermes\configure-hermes-qwopus-coder-local-provider.bat
+```
+
+That applies the same `provider: custom` shape with `model.base_url` set to:
+
+```text
+http://127.0.0.1:8004/v1
+```
+
 ## Usage Order
 
 1. Add the saved provider with `scripts\hermes\add-hermes-qwen-mxfp4-custom-provider.bat`, or make it active with `scripts\hermes\configure-hermes-qwen-mxfp4-local-provider.bat`.
@@ -132,12 +169,25 @@ If Hermes was already open, restart it after changing config so the desktop app 
 
 If the Qwen server is not running, Hermes' local provider calls will fail until the server is started again.
 
+For Qwopus Coder, the equivalent usage order is:
+
+1. Add the saved provider with `scripts\hermes\add-hermes-qwopus-coder-custom-provider.bat`, or make it active with `scripts\hermes\configure-hermes-qwopus-coder-local-provider.bat`.
+2. Start the Qwopus server with `scripts\localai\qwopus36-35b-a3b-coder-mtp-gguf\start-qwopus36-35b-a3b-coder-mtp-q5-k-m-262k.bat`.
+3. Launch or restart Hermes Desktop.
+4. Select `Qwopus3.6 35B-A3B Coder MTP Q5_K_M 262K` through `Edit Models...`.
+
 ## Verify The Endpoint
 
 With the server running:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8001/v1/models
+```
+
+For Qwopus Coder:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8004/v1/models
 ```
 
 Minimal chat request:
@@ -174,3 +224,4 @@ Or use Hermes' model picker/config commands to select a cloud provider again.
 - Start the model server before Hermes attempts to use the provider.
 - For the MXFP4_MOE GGUF, the server should be started with the 262K profile in `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`.
 - Hermes only sees an OpenAI-compatible endpoint. It does not know whether the backend model is `UD-Q4_K_XL` or `MXFP4_MOE`; use the provider name to keep the UI clear.
+- Qwopus Coder intentionally uses port `8004`; do not reuse `8001` unless you are comfortable replacing the Qwen provider entry.

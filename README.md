@@ -13,6 +13,7 @@ Benchmarks and launch profiles for running large GGUF models on AMD Ryzen AI Max
 The tuned targets are:
 
 - Recommended model: `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`
+- Coding-agent model: `Qwopus3.6-35B-A3B-Coder-MTP-Q5_K_M.gguf`
 - Previous baseline model: `Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf`
 - Repo family: `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`
 - Context target: `262144`
@@ -24,12 +25,15 @@ If you are an AI agent helping with this repo, treat these files as the operatio
 
 - Model-specific summary: `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`
 - MXFP4_MOE summary: `docs/models/qwen3.6-35b-a3b-mtp-mxfp4_moe.md`
+- Qwopus coder summary: `docs/models/qwopus3.6-35b-a3b-coder-mtp-q5_k_m.md`
 - Hermes integration: `docs/integrations/hermes-desktop.md`
 - Script layout and local model paths: `scripts/README.md`
 - Tuned server launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mtp-262k.ps1`
 - Double-click launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mtp-262k.bat`
 - MXFP4_MOE tuned server launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.ps1`
 - MXFP4_MOE double-click launcher: `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`
+- Qwopus Coder install launcher: `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/install-qwopus36-35b-a3b-coder-mtp-q5-k-m.bat`
+- Qwopus Coder server launcher: `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/start-qwopus36-35b-a3b-coder-mtp-q5-k-m-262k.bat`
 - Benchmark harness: `scripts/localai/qwen36-35b-a3b-mtp-gguf/bench-qwen36-mtp.ps1`
 - Ornith Q4_K_M and Q5_K_M scripts: `scripts/localai/ornith-1.0-35b-gguf/`
 - Cross-repo prompt fixtures: `benchmarks/prompts/`
@@ -39,6 +43,7 @@ If you are an AI agent helping with this repo, treat these files as the operatio
 Important behavior:
 
 - Hermes needs a stable OpenAI-compatible endpoint. This repo standardizes on `http://127.0.0.1:8001/v1`.
+- Qwopus Coder uses `http://127.0.0.1:8004/v1` so Hermes can keep it separate from the Qwen provider.
 - Unsloth Studio may launch the same model on a dynamic port such as `53477`; do not assume Hermes is using Studio unless Hermes' `model.base_url` points to that exact live port.
 - For Hermes, prefer the `.bat` launcher because it starts the tuned server on the stable `8001` endpoint.
 - For `MXFP4_MOE`, use `scripts/localai/qwen36-35b-a3b-mtp-gguf/start-qwen36-35b-a3b-mxfp4-mtp-262k.bat`; it auto-searches `Downloads` and the Unsloth HF cache for `Qwen3.6-35B-A3B-MXFP4_MOE.gguf`.
@@ -120,6 +125,26 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\localai\qwen36-35b
 
 The benchmark harness searches `%USERPROFILE%\Downloads` and the default Hugging Face cache under `%USERPROFILE%\.cache\huggingface\...`. If your GGUF lives somewhere else, pass `-ModelPath C:\path\to\Qwen3.6-35B-A3B-MXFP4_MOE.gguf`.
 
+Install Qwopus3.6 35B-A3B Coder MTP Q5_K_M and add it to Hermes saved providers:
+
+```text
+scripts\localai\qwopus36-35b-a3b-coder-mtp-gguf\install-qwopus36-35b-a3b-coder-mtp-q5-k-m.bat
+```
+
+Start the Qwopus Coder server:
+
+```text
+scripts\localai\qwopus36-35b-a3b-coder-mtp-gguf\start-qwopus36-35b-a3b-coder-mtp-q5-k-m-262k.bat
+```
+
+Qwopus runs on:
+
+```text
+http://127.0.0.1:8004/v1
+```
+
+Qwopus uses the same 262K MTP launch profile as the current Qwen MXFP4 profile (`draft n=3`, `threads=28`, `ubatch=1024`, f16 KV). It has not been separately benchmarked in this repo yet.
+
 Download Ornith 1.0 35B Q4_K_M:
 
 ```text
@@ -178,6 +203,7 @@ This repo keeps model weights out of git. The current local install is mostly Hu
 
 - Runtime: `%USERPROFILE%\.unsloth\llama.cpp\build\bin\Release\llama-server.exe`
 - Qwen cache: `%USERPROFILE%\.cache\huggingface\hub\models--unsloth--Qwen3.6-35B-A3B-MTP-GGUF\snapshots\...`
+- Qwopus cache: `%USERPROFILE%\.cache\huggingface\hub\models--Jackrong--Qwopus3.6-35B-A3B-Coder-MTP-GGUF\snapshots\manual`
 - Ornith downloader target: `%USERPROFILE%\.cache\huggingface\hub\models--deepreinforce-ai--Ornith-1.0-35B-GGUF\snapshots\...`
 
 Use `-ModelPath` for one-off files elsewhere. Prefer the Hugging Face cache by default because the existing Qwen files already live there and it avoids duplicate 20+ GB GGUFs.
@@ -198,6 +224,15 @@ Use `scripts\hermes\add-hermes-qwen-mxfp4-custom-provider.bat` to make the endpo
 
 The older generic provider BATs still work for the same endpoint; the MXFP4 BATs only give the saved provider a clearer display name.
 
+For Qwopus Coder, use:
+
+```text
+scripts\hermes\add-hermes-qwopus-coder-custom-provider.bat
+scripts\hermes\configure-hermes-qwopus-coder-local-provider.bat
+```
+
+These point Hermes at `http://127.0.0.1:8004/v1` and label the provider `Qwopus3.6 35B-A3B Coder MTP Q5_K_M 262K`.
+
 The active-default config helper backs up `%LOCALAPPDATA%\hermes\config.yaml` and applies:
 
 ```yaml
@@ -215,11 +250,13 @@ See `docs/integrations/hermes-desktop.md`.
 
 - `scripts/README.md`: script layout and local model storage notes.
 - `scripts/localai/qwen36-35b-a3b-mtp-gguf/`: Qwen GGUF server launchers and MTP benchmark harness.
+- `scripts/localai/qwopus36-35b-a3b-coder-mtp-gguf/`: Qwopus Coder Q5_K_M downloader, installer, and MTP server launcher.
 - `scripts/localai/ornith-1.0-35b-gguf/`: Ornith Q4_K_M and Q5_K_M downloaders and no-MTP benchmark harness.
 - `benchmarks/prompts/`: copied NVIDIA-local-LLM-profiles prompt fixtures for short and long context baselines.
 - `scripts/hermes/`: Hermes saved-provider and active-default helpers.
 - `docs/models/qwen3.6-35b-a3b-mtp-ud-q4_k_xl.md`: model-specific tuning summary and agent notes.
 - `docs/models/qwen3.6-35b-a3b-mtp-mxfp4_moe.md`: MXFP4_MOE tuning summary and agent notes.
+- `docs/models/qwopus3.6-35b-a3b-coder-mtp-q5_k_m.md`: Qwopus Coder setup summary and agent notes.
 - `docs/integrations/hermes-desktop.md`: Hermes Desktop local-provider setup.
 - `results/qwen36-35b-a3b-mtp-262k/`: raw CSV benchmark results.
 - `patches/unsloth-studio-rocm-strix-mtp.patch`: patch record for applying the Studio backend defaults.
