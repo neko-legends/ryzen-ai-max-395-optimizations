@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="820" viewBox="0 0 1180 820" role="img" aria-labelledby="title desc">
+<title id="title">Qwopus3.6 Coder MTP Q5_K_M 262K BookContext benchmark on Ryzen AI Max+ 395</title>
+<desc id="desc">Chart splitting Qwopus prompt prefill, generated output, and cold wall time for 10K and 200K BookContext fixtures on AMD Ryzen AI Max+ 395 chipset with Radeon 8060S.</desc>
+<rect width="1180" height="820" fill="#fbfcfd"/>
+<rect x="20" y="20" width="1140" height="780" rx="8" fill="#ffffff" stroke="#e5ebf0"/>
+<text x="42" y="62" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="29" font-weight="700" fill="#17202a">Qwopus3.6 Coder MTP Q5_K_M 262K BookContext</text>
+<text x="42" y="91" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" fill="#5e6b78">AMD Ryzen AI Max+ 395 chipset / Radeon 8060S, Windows HIP/ROCm, Unsloth llama.cpp, MTP n=2, f16 KV</text>
+<text x="42" y="116" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" fill="#5e6b78">The 623.2 tok/s result is 10K prompt prefill, not generated-output speed. Decode was 40.5 tok/s at 10K and 23.9 tok/s at 200K.</text>
+<text x="42" y="158" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="700" fill="#17202a">Prompt prefill</text>
+<text x="42" y="180" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#5e6b78">prompt tokens per second</text>
+<line x1="192.0" y1="192" x2="192.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="192.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">0</text>
+<line x1="266.0" y1="192" x2="266.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="266.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">130</text>
+<line x1="340.0" y1="192" x2="340.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="340.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">260</text>
+<line x1="414.0" y1="192" x2="414.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="414.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">390</text>
+<line x1="488.0" y1="192" x2="488.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="488.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">520</text>
+<line x1="562.0" y1="192" x2="562.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="562.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">650</text>
+<rect x="42" y="192" width="520" height="46" rx="6" fill="#f7f9fb"/>
+<text x="56" y="216" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="650" fill="#17202a">10K prompt</text>
+<text x="56" y="234" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">8,907 prompt tokens</text>
+<rect x="192" y="205" width="354.7" height="18" rx="3" fill="#2468c9"/>
+<text x="554.7" y="219" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" fill="#17202a">623.2</text>
+<text x="56" y="270" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="650" fill="#17202a">200K prompt</text>
+<text x="56" y="288" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">174,588 prompt tokens</text>
+<rect x="192" y="259" width="122.4" height="18" rx="3" fill="#2468c9"/>
+<text x="322.4" y="273" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" fill="#17202a">215.0</text>
+<text x="610" y="158" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="700" fill="#17202a">Generated output</text>
+<text x="610" y="180" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#5e6b78">eval tokens per second</text>
+<line x1="760.0" y1="192" x2="760.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="760.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">0</text>
+<line x1="883.3" y1="192" x2="883.3" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="883.3" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">15</text>
+<line x1="1006.7" y1="192" x2="1006.7" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="1006.7" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">30</text>
+<line x1="1130.0" y1="192" x2="1130.0" y2="314" stroke="#d8e0e8" stroke-width="1"/>
+<text x="1130.0" y="334" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">45</text>
+<rect x="610" y="192" width="520" height="46" rx="6" fill="#f7f9fb"/>
+<text x="624" y="216" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="650" fill="#17202a">10K prompt</text>
+<text x="624" y="234" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">8,907 prompt tokens</text>
+<rect x="760" y="205" width="333.0" height="18" rx="3" fill="#0f8a73"/>
+<text x="1101.0" y="219" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" fill="#17202a">40.5</text>
+<text x="624" y="270" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="650" fill="#17202a">200K prompt</text>
+<text x="624" y="288" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">174,588 prompt tokens</text>
+<rect x="760" y="259" width="196.5" height="18" rx="3" fill="#0f8a73"/>
+<text x="964.5" y="273" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" fill="#17202a">23.9</text>
+<text x="42" y="394" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" fill="#17202a">Cold one-shot wall time breakdown</text>
+<text x="42" y="418" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" fill="#5e6b78">The 200K run is dominated by prompt prefill. MTP helps decode, not the cold prefill pass.</text>
+<line x1="252.0" y1="442" x2="252.0" y2="590" stroke="#d8e0e8" stroke-width="1"/>
+<text x="252.0" y="610" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">0s</text>
+<line x1="398.3" y1="442" x2="398.3" y2="590" stroke="#d8e0e8" stroke-width="1"/>
+<text x="398.3" y="610" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">150s</text>
+<line x1="544.7" y1="442" x2="544.7" y2="590" stroke="#d8e0e8" stroke-width="1"/>
+<text x="544.7" y="610" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">300s</text>
+<line x1="691.0" y1="442" x2="691.0" y2="590" stroke="#d8e0e8" stroke-width="1"/>
+<text x="691.0" y="610" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">450s</text>
+<line x1="837.3" y1="442" x2="837.3" y2="590" stroke="#d8e0e8" stroke-width="1"/>
+<text x="837.3" y="610" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">600s</text>
+<line x1="983.7" y1="442" x2="983.7" y2="590" stroke="#d8e0e8" stroke-width="1"/>
+<text x="983.7" y="610" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">750s</text>
+<line x1="1130.0" y1="442" x2="1130.0" y2="590" stroke="#d8e0e8" stroke-width="1"/>
+<text x="1130.0" y="610" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">900s</text>
+<rect x="42" y="441" width="1088" height="58" rx="6" fill="#f7f9fb"/>
+<text x="56" y="467" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" font-weight="650" fill="#17202a">10K prompt</text>
+<text x="56" y="488" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">wall 77.50s, 13.21 wall tok/s</text>
+<rect x="252.0" y="458" width="13.9" height="20" rx="3" fill="#2468c9"/>
+<rect x="265.9" y="458" width="24.7" height="20" rx="3" fill="#0f8a73"/>
+<rect x="290.6" y="458" width="37.0" height="20" rx="3" fill="#c76b22"/>
+<text x="335.6" y="473" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" fill="#17202a">77.5s total</text>
+<text x="56" y="533" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" font-weight="650" fill="#17202a">200K prompt</text>
+<text x="56" y="554" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="11" fill="#5e6b78">wall 892.66s, 1.15 wall tok/s</text>
+<rect x="252.0" y="524" width="792.2" height="20" rx="3" fill="#2468c9"/>
+<text x="648.1" y="539" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="10" font-weight="650" fill="#ffffff">812.0s</text>
+<rect x="1044.2" y="524" width="41.8" height="20" rx="3" fill="#0f8a73"/>
+<rect x="1086.0" y="524" width="36.9" height="20" rx="3" fill="#c76b22"/>
+<text x="1130.8" y="539" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" fill="#17202a">892.7s total</text>
+<rect x="252" y="612" width="14" height="14" rx="2" fill="#2468c9"/>
+<text x="274" y="624" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#17202a">prompt prefill</text>
+<rect x="417" y="612" width="14" height="14" rx="2" fill="#0f8a73"/>
+<text x="439" y="624" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#17202a">generated output</text>
+<rect x="582" y="612" width="14" height="14" rx="2" fill="#c76b22"/>
+<text x="604" y="624" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#17202a">startup/other</text>
+<text x="42" y="676" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#5e6b78">Source: docs/assets/qwopus-q5-262k-bookcontext.csv and raw CSV under results/qwopus36-35b-a3b-coder-mtp-gguf/.</text>
+<text x="42" y="696" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#5e6b78">Full wall tok/s is cold CLI one-shot throughput; steady Hermes/server decode can feel closer to eval tok/s after the prompt is processed.</text>
+</svg>

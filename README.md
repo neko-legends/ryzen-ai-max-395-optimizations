@@ -8,6 +8,10 @@ In the chart, `eval` means model generation speed only, while `wall` means full 
 
 The Ornith-specific chart separates output speed from cold prompt prefill. That keeps the 174K-context run readable without treating one-shot preload latency as steady interactive throughput.
 
+![Qwopus3.6 Coder MTP Q5_K_M 262K BookContext on Ryzen AI Max+ 395](docs/assets/qwopus-q5-262k-bookcontext.svg)
+
+The Qwopus Coder chart uses the copied 10K and 200K BookContext fixtures on the AMD Ryzen AI Max+ 395 chipset / Radeon 8060S. The eye-catching `623.2 tok/s` number is 10K prompt prefill, not generated-output speed; the same run decoded at `40.5 tok/s`, while the 200K fixture decoded at `23.9 tok/s` after a large cold prefill.
+
 Benchmarks and launch profiles for running large GGUF models on AMD Ryzen AI Max+ 395 / Radeon 8060S Strix Halo systems.
 
 The tuned targets are:
@@ -39,6 +43,7 @@ If you are an AI agent helping with this repo, treat these files as the operatio
 - Ornith Q4_K_M and Q5_K_M scripts: `scripts/localai/ornith-1.0-35b-gguf/`
 - Cross-repo prompt fixtures: `benchmarks/prompts/`
 - Ornith-specific context chart: `docs/assets/ornith-262k-context.svg`
+- Qwopus Coder 10K/200K context chart: `docs/assets/qwopus-q5-262k-bookcontext.svg`
 - Raw benchmark CSVs: `results/`
 
 Important behavior:

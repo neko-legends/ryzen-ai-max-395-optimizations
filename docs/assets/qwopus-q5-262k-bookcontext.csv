@@ -1,0 +1,3 @@
+fixture,prompt_tokens,completion_tokens,prompt_tps,eval_tps,wall_seconds,wall_tps,source_file,note
+book-context-10k,8907,1024,623.2,40.5,77.50,13.21,results/qwopus36-35b-a3b-coder-mtp-gguf/qwopus-q5-cli-ctx262k-book-10k-200k-gen1024-mtp-n2-20260630-101249.csv,"Qwopus3.6-35B-A3B-Coder-MTP-Q5_K_M, Ryzen AI Max+ 395 chipset / Radeon 8060S, Windows HIP/ROCm, 262144 context, MTP n=2, f16 KV, t28, ub1024"
+book-context-200k,174588,1024,215.0,23.9,892.66,1.15,results/qwopus36-35b-a3b-coder-mtp-gguf/qwopus-q5-cli-ctx262k-book-10k-200k-gen1024-mtp-n2-20260630-101249.csv,"Qwopus3.6-35B-A3B-Coder-MTP-Q5_K_M, Ryzen AI Max+ 395 chipset / Radeon 8060S, Windows HIP/ROCm, 262144 context, MTP n=2, f16 KV, t28, ub1024"

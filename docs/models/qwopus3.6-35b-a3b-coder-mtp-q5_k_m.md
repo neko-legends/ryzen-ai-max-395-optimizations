@@ -97,6 +97,8 @@ MTP improved wall throughput by about 42% on this prompt. Qwopus Q5_K_M is slowe
 
 The meaningful long-context run uses the copied NVIDIA-local-LLM-profiles book fixtures at `262144` context and `1024` requested generated tokens:
 
+![Qwopus3.6 Coder MTP Q5_K_M 262K BookContext on Ryzen AI Max+ 395](../assets/qwopus-q5-262k-bookcontext.svg)
+
 | Prompt fixture | Prompt tokens | Prompt eval tok/s | Generation tok/s | Full wall tok/s | Wall time |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `book-context-10k.txt` | 8,907 | 623.2 | 40.5 | 13.21 | 77.50s |
